@@ -11,7 +11,7 @@ professionally every day now.
 
 ## Technology / External Libraries
 
-- Spring Boot 2.7.0,
+- Spring Boot 2.7.1,
 - Spring Web MVC - with Tomcat
 - H2 Database 2.1.214 or later 
 - Spring Data JPA / Hibernate
