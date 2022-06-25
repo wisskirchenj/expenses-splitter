@@ -1,34 +1,37 @@
 package de.cofinpro.splitter;
 
+import de.cofinpro.splitter.controller.CommandLineInterpreter;
+import de.cofinpro.splitter.controller.SplitterCommandLineRunner;
+import de.cofinpro.splitter.controller.command.ExitCommand;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.context.WebApplicationContext;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 
-import javax.servlet.ServletContext;
+import java.util.Scanner;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-@AutoConfigureMockMvc
 @SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class ExpensesSplitterApplicationTests {
 
-    @Autowired
-    private WebApplicationContext webApplicationContext;
+    @MockBean
+    CommandLineInterpreter commandLineInterpreter;
 
-    @Autowired
-    private MockMvc mockMvc;
+    @SpyBean
+    @InjectMocks
+    SplitterCommandLineRunner commandLineRunner;
 
-    @Test
-    void contextLoads() {
-        ServletContext servletContext = webApplicationContext.getServletContext();
-
-        assertNotNull(servletContext);
-        assertTrue(servletContext instanceof MockServletContext);
+    //@Test
+    void whenContextLoads_ThenRunnerRuns() {
+        when(commandLineInterpreter.parseNext()).thenReturn(new ExitCommand());
+        verify(commandLineRunner).run(any());
     }
-
 }
