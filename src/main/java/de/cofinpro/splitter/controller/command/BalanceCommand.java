@@ -5,6 +5,9 @@ import de.cofinpro.splitter.model.Transactions;
 
 import java.time.LocalDate;
 
+/**
+ * implementation of LineCommand for the "balance" command execution.
+ */
 public class BalanceCommand implements LineCommand {
 
     private final ConsolePrinter printer;
@@ -22,6 +25,12 @@ public class BalanceCommand implements LineCommand {
         }
     }
 
+    /**
+     * validates and processes the arguments given: correct number of args (1 or 0), if argument given. must be "open"
+     * or "close" = default.
+     * @param arguments arguments to be processed and validated
+     * @return validation result.
+     */
     private boolean validClArgumentsProcessed(String[] arguments) {
         if (arguments.length > 1) {
             return false;
@@ -36,6 +45,10 @@ public class BalanceCommand implements LineCommand {
         return false;
     }
 
+    /** if valid arguments were given,
+     * get all balance texts from the overall transactions and hand them over for printing.
+     * @param transactions the transactions map
+     */
     @Override
     public void execute(Transactions transactions) {
         if (invalid) {

@@ -6,6 +6,9 @@ import org.springframework.context.annotation.Configuration;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
+/**
+ * Configuration class, offering (singleton) beans as the stdin-scanner or date-formatter.
+ */
 @Configuration
 public class CommandLineConfiguration {
 

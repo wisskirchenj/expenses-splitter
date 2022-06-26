@@ -6,7 +6,8 @@ import java.util.Collections;
 import java.util.Comparator;
 
 /**
- * List derived class, that holds a date sorted (guaranteed, if addOrdered - method used exclusively) transaction list.
+ * List derived class, that holds all date sorted (guaranteed, if addOrdered - method used exclusively) transactions
+ * between two persons (a PersonPair).
  */
 public class PairTransactions extends ArrayList<MoneyTransfer> {
 
@@ -24,6 +25,12 @@ public class PairTransactions extends ArrayList<MoneyTransfer> {
         }
     }
 
+    /**
+     * get the balance at the given balanceDate (including transactions up to that day) of the transactions between
+     * the PersonPair - as seen from the "first" person perspective. (i.e. positive balance = first has to get money).
+     * @param balanceDate a given date to balance at
+     * @return the balance sum
+     */
     public int getBalance(LocalDate balanceDate) {
         return stream().filter(moneyTransfer -> moneyTransfer.getDate().compareTo(balanceDate) <= 0)
                 .mapToInt(MoneyTransfer::getAmount).sum();

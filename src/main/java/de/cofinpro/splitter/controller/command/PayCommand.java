@@ -5,6 +5,10 @@ import de.cofinpro.splitter.model.Transactions;
 
 import java.time.LocalDate;
 
+/**
+ * abstract base class for the pay command "borrow" and "repay" that bundles the arguments validation / processing
+ * and error case. The actual command is called by an abstract hook method.
+ */
 public abstract class PayCommand implements LineCommand {
 
     protected final ConsolePrinter printer;
@@ -20,6 +24,12 @@ public abstract class PayCommand implements LineCommand {
         invalid = !validClArgumentsProcessed(arguments);
     }
 
+    /**
+     * does 3 validations on the arguments given: correct number of args, persons given are different and amount is
+     * an integer. Also, validated arguments are stored in field variables.
+     * @param arguments arguments to be processed and validated
+     * @return validation result.
+     */
     private boolean validClArgumentsProcessed(String[] arguments) {
         if (arguments.length != 3) {
             return false;
@@ -46,5 +56,9 @@ public abstract class PayCommand implements LineCommand {
         }
     }
 
+    /**
+     * do the happy path execution of money transfer.
+     * @param transactions map of all transactions.
+     */
     protected abstract void executeMoneyTransfer(Transactions transactions);
 }

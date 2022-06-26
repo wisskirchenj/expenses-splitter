@@ -9,5 +9,4 @@ public class ExpensesSplitterApplication {
     public static void main(String[] args) {
         SpringApplication.run(ExpensesSplitterApplication.class, args);
     }
-
 }

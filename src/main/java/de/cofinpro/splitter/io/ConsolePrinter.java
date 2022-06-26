@@ -5,6 +5,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * Slf4J wrapping printer class, accepting input to print to the console (stdout)
+ */
 @Slf4j
 @Component
 public class ConsolePrinter {
@@ -19,6 +22,10 @@ public class ConsolePrinter {
         log.info(message);
     }
 
+    /**
+     * prints the informative list of balances texts - or no repayments text, if all balances are zero.
+     * @param balances possibly empty list of "A owes B" texts
+     */
     public void printOwes(List<String> balances) {
         if (balances.isEmpty()) {
             printInfo(NO_REPAYMENTS);

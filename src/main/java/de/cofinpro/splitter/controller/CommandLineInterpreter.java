@@ -13,6 +13,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * command line interpreter component to be autowired in the CommandLineRunner. It does the commands parsing, including
+ * date recognition if given as optional 1st parameter and the command recognition and split / hand over of arguments.
+ */
 @Component
 public class CommandLineInterpreter {
 
@@ -28,9 +32,9 @@ public class CommandLineInterpreter {
     }
 
     /**
-     * core method of the CommandLineInterpreter that parses the next user input line by use of the given scanner (constructor).
-     * It recognizes the defined commands and - if the argument number for the command matches - it creates and
-     * returns a new Command. In ay other case an UnknownCommand is created and returned.
+     * core method of the CommandLineInterpreter that parses the next user input line by use of the given scanner (bean).
+     * It recognizes the defined commands and creates and returns a new Command. If not recognized, an UnknownCommand
+     * is created and returned - also for the no args command, already an InvalidCommand is created, if args are given.
      * @return the created command found as parse result.
      */
     public LineCommand parseNext() {
@@ -50,6 +54,12 @@ public class CommandLineInterpreter {
         };
     }
 
+    /**
+     * if the first token in the list can be parsed into a LocalDate with specified format, this date is returned and
+     * the list token removed. If not, the current date is returned
+     * @param tokens the list of command line tokens
+     * @return parsed date or current, if no parsable date.
+     */
     private LocalDate getDateAndRemoveFromList(List<String> tokens) {
         try {
             LocalDate date = LocalDate.parse(tokens.get(0), dateTimeFormatter);
