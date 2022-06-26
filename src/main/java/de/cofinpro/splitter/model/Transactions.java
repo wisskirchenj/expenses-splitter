@@ -44,14 +44,14 @@ public class Transactions extends HashMap<PersonPair, PairTransactions> {
     private String getOwesText(Entry<PersonPair, PairTransactions> personPairTransactionsEntry, LocalDate balanceDate) {
         int balance = personPairTransactionsEntry.getValue().getBalance(balanceDate);
         StringBuilder builder = new StringBuilder();
-        if (balance < 0) {
+        if (balance > 0) {
             builder.append(personPairTransactionsEntry.getKey().getFirst()).append(" owes ")
-                    .append(personPairTransactionsEntry.getKey().getSecond()).append(" ").append(Math.abs(balance));
+                    .append(personPairTransactionsEntry.getKey().getSecond()).append(" ").append(balance);
             return builder.toString();
         }
-        if (balance > 0) {
+        if (balance < 0) {
             builder.append(personPairTransactionsEntry.getKey().getSecond()).append(" owes ")
-                    .append(personPairTransactionsEntry.getKey().getFirst()).append(" ").append(balance);
+                    .append(personPairTransactionsEntry.getKey().getFirst()).append(" ").append(Math.abs(balance));
             return builder.toString();
         }
         return "";
