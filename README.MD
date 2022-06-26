@@ -26,7 +26,17 @@ The sources of main project tasks (6 stages) and the unit, mockito, spring testi
 
 ## Program description
 
-Coming up soon...
+Commands supported in stage 1:
+> [date] borrow PersonOne PersonTwo amount -> PersonTwo lent some amount to PersonOne on the specified date
+
+> [date] repay PersonOne PersonTwo amount -> PersonOne repaid an amount to PersonTwo on the date.
+
+> [date] balance [open|close] -> Calculate and display the list of repayments with names and amounts to be repaid in the natural sorted order for the balance date.
+-> Here open refers to the opening balance on the first day of the month and close refers to the closing balance on that specific date.
+
+> help -> print the list of commands in natural sorted order
+
+> exit
 
 Have fun!
 
@@ -37,3 +47,6 @@ Have fun!
 ## Progress
 
 23.06.22 Project started.
+
+26.06.22 Stage 1 completed with Spring Boot CommandLineRunner implementation, Command Pattern used with
+CommandLineInterpreter and LineCommand Interface, Mockito Inorder Integration tests
