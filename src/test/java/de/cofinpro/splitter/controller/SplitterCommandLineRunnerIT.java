@@ -2,6 +2,8 @@ package de.cofinpro.splitter.controller;
 
 import de.cofinpro.splitter.io.CommandLineConfiguration;
 import de.cofinpro.splitter.io.ConsolePrinter;
+import de.cofinpro.splitter.model.ExpensesModel;
+import de.cofinpro.splitter.model.Groups;
 import de.cofinpro.splitter.model.Transactions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,7 +35,7 @@ class SplitterCommandLineRunnerIT {
         splitterCommandLineRunner = new SplitterCommandLineRunner(
                 new CommandLineInterpreter(scanner, printer,
                         new CommandLineConfiguration().getDateFormatter()),
-                new Transactions()
+                new ExpensesModel(new Transactions(), new Groups())
         );
     }
 

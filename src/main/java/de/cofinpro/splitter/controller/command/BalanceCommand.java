@@ -1,7 +1,7 @@
 package de.cofinpro.splitter.controller.command;
 
 import de.cofinpro.splitter.io.ConsolePrinter;
-import de.cofinpro.splitter.model.Transactions;
+import de.cofinpro.splitter.model.ExpensesModel;
 
 import java.time.LocalDate;
 
@@ -47,14 +47,14 @@ public class BalanceCommand implements LineCommand {
 
     /** if valid arguments were given,
      * get all balance texts from the overall transactions and hand them over for printing.
-     * @param transactions the transactions map
+     * @param expensesModel the model data with the transactions map
      */
     @Override
-    public void execute(Transactions transactions) {
+    public void execute(ExpensesModel expensesModel) {
         if (invalid) {
             printer.printError(ERROR_INVALID);
         } else {
-            printer.printOwes(transactions.getBalances(balanceDate));
+            printer.printOwes(expensesModel.getTransactions().getBalances(balanceDate));
         }
     }
 }

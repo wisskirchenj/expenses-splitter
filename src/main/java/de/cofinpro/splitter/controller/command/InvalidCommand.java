@@ -1,7 +1,7 @@
 package de.cofinpro.splitter.controller.command;
 
 import de.cofinpro.splitter.io.ConsolePrinter;
-import de.cofinpro.splitter.model.Transactions;
+import de.cofinpro.splitter.model.ExpensesModel;
 
 /**
  * class for a recognized, but invalid command (syntax), that prints an error message as execution
@@ -15,7 +15,7 @@ public class InvalidCommand implements LineCommand {
     }
 
     @Override
-    public void execute(Transactions transactions) {
+    public void execute(ExpensesModel expensesModel) {
         printer.printError(ERROR_INVALID);
     }
 }

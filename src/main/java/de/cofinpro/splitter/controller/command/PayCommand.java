@@ -1,6 +1,7 @@
 package de.cofinpro.splitter.controller.command;
 
 import de.cofinpro.splitter.io.ConsolePrinter;
+import de.cofinpro.splitter.model.ExpensesModel;
 import de.cofinpro.splitter.model.Transactions;
 
 import java.time.LocalDate;
@@ -48,11 +49,11 @@ public abstract class PayCommand implements LineCommand {
     }
 
     @Override
-    public void execute(Transactions transactions) {
+    public void execute(ExpensesModel expensesModel) {
         if (invalid) {
             printer.printError(ERROR_INVALID);
         } else {
-            executeMoneyTransfer(transactions);
+            executeMoneyTransfer(expensesModel.getTransactions());
         }
     }
 

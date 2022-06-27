@@ -1,7 +1,7 @@
 package de.cofinpro.splitter.controller.command;
 
 import de.cofinpro.splitter.io.ConsolePrinter;
-import de.cofinpro.splitter.model.Transactions;
+import de.cofinpro.splitter.model.ExpensesModel;
 
 import java.util.Arrays;
 
@@ -16,7 +16,7 @@ public class HelpCommand implements LineCommand {
     }
 
     @Override
-    public void execute(Transactions transactions) {
+    public void execute(ExpensesModel expensesModel) {
         Arrays.stream(CommandType.values())
                 .map(CommandType::name)
                 .map(String::toLowerCase)
