@@ -11,5 +11,5 @@ import java.time.LocalDate;
 @Value
 public class MoneyTransfer {
     LocalDate date;
-    int amount;
+    long amount;
 }

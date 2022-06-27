@@ -16,7 +16,7 @@ public abstract class PayCommand implements LineCommand {
     protected final LocalDate date;
     protected String from;
     protected String to;
-    protected int amount = 0;
+    protected long amount;
     private final boolean invalid;
 
     protected PayCommand(ConsolePrinter printer, LocalDate date, String[] arguments) {
@@ -27,7 +27,7 @@ public abstract class PayCommand implements LineCommand {
 
     /**
      * does 3 validations on the arguments given: correct number of args, persons given are different and amount is
-     * an integer. Also, validated arguments are stored in field variables.
+     * a valid money amount (max. 2 digits). Also, validated arguments are stored in field variables.
      * @param arguments arguments to be processed and validated
      * @return validation result.
      */
@@ -41,7 +41,7 @@ public abstract class PayCommand implements LineCommand {
             return false;
         }
         try {
-            this.amount = Integer.parseInt(arguments[2]);
+            this.amount = getCentsFromDecimalInput(arguments[2]);
         } catch (NumberFormatException e) {
             return false;
         }
@@ -50,7 +50,7 @@ public abstract class PayCommand implements LineCommand {
 
     @Override
     public void execute(ExpensesModel expensesModel) {
-        if (invalid) {
+        if (invalid || amount == 0) {
             printer.printError(ERROR_INVALID);
         } else {
             executeMoneyTransfer(expensesModel.getTransactions());

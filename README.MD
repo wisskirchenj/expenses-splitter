@@ -34,6 +34,12 @@ Commands supported in stage 1:
 > [date] balance [open|close] -> Calculate and display the list of repayments with names and amounts to be repaid in the natural sorted order for the balance date.
 -> Here open refers to the opening balance on the first day of the month and close refers to the closing balance on that specific date.
 
+> group create|show GROUPNAME [(list of names)] -> create or display groups of persons used in purchase command
+
+> [date] purchase Person itemName amount (GROUP) -> a person purchases an item for an amount, which must be spread in the GROUP.
+A possible cents remainder of N cents from splitting division is spread between the first N persons in the list ordered by name,
+each person pays an extra 0.01.
+
 > help -> print the list of commands in natural sorted order
 
 > exit
@@ -50,3 +56,7 @@ Have fun!
 
 26.06.22 Stage 1 completed with Spring Boot CommandLineRunner implementation, Command Pattern used with
 CommandLineInterpreter and LineCommand Interface, Mockito Inorder Integration tests
+
+27.06.22 Stage 2 completed, further commands added for groups creating and
+splitting, also now transferred from integer transaction amounts to real
+money arithmetic on cents basis with rounding etc,

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import static java.util.function.Predicate.not;
 
@@ -42,16 +43,18 @@ public class Transactions extends HashMap<PersonPair, PairTransactions> {
      * @return the builder build text - or empty string if balance is zero at the date.
      */
     private String getOwesText(Entry<PersonPair, PairTransactions> personPairTransactionsEntry, LocalDate balanceDate) {
-        int balance = personPairTransactionsEntry.getValue().getBalance(balanceDate);
+        double balance = personPairTransactionsEntry.getValue().getBalance(balanceDate);
         StringBuilder builder = new StringBuilder();
         if (balance > 0) {
             builder.append(personPairTransactionsEntry.getKey().getFirst()).append(" owes ")
-                    .append(personPairTransactionsEntry.getKey().getSecond()).append(" ").append(balance);
+                    .append(personPairTransactionsEntry.getKey().getSecond()).append(" ")
+                    .append(String.format(Locale.US, "%.2f", balance));
             return builder.toString();
         }
         if (balance < 0) {
             builder.append(personPairTransactionsEntry.getKey().getSecond()).append(" owes ")
-                    .append(personPairTransactionsEntry.getKey().getFirst()).append(" ").append(Math.abs(balance));
+                    .append(personPairTransactionsEntry.getKey().getFirst()).append(" ")
+                    .append(String.format(Locale.US, "%.2f", Math.abs(balance)));
             return builder.toString();
         }
         return "";

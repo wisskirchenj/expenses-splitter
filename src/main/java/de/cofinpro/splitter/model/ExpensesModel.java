@@ -4,6 +4,10 @@ import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/**
+ * container bean that represents the overall data model gathered throughout the application run,
+ * i.e. created groups and transactions, which are in turn autowired.
+ */
 @Component
 @Data
 public class ExpensesModel {

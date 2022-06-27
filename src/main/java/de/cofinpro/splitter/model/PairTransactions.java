@@ -28,11 +28,12 @@ public class PairTransactions extends ArrayList<MoneyTransfer> {
     /**
      * get the balance at the given balanceDate (including transactions up to that day) of the transactions between
      * the PersonPair - as seen from the "first" person perspective. (i.e. positive balance = first has to get money).
+     * The balance is converted from cents into fractional currency.
      * @param balanceDate a given date to balance at
-     * @return the balance sum
+     * @return the balance sum as double
      */
-    public int getBalance(LocalDate balanceDate) {
+    public double getBalance(LocalDate balanceDate) {
         return stream().filter(moneyTransfer -> moneyTransfer.getDate().compareTo(balanceDate) <= 0)
-                .mapToInt(MoneyTransfer::getAmount).sum();
+                .mapToLong(MoneyTransfer::getAmount).sum() / 100.0;
     }
 }
