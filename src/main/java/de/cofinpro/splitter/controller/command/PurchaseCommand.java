@@ -1,11 +1,13 @@
 package de.cofinpro.splitter.controller.command;
 
+import de.cofinpro.splitter.controller.PersonsResolver;
 import de.cofinpro.splitter.io.ConsolePrinter;
 import de.cofinpro.splitter.model.ExpensesModel;
-import de.cofinpro.splitter.model.Group;
 import de.cofinpro.splitter.model.Transactions;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * LineCommand implementation of the "purchase" command, used to create a purchase of one person for a group,
@@ -18,7 +20,7 @@ public class PurchaseCommand implements LineCommand {
     private final LocalDate date;
     private long amount;
     private String payer;
-    private String groupName;
+    private String[] personsTokens;
 
     public PurchaseCommand(ConsolePrinter printer, LocalDate date, String[] arguments) {
         this.printer = printer;
@@ -42,36 +44,39 @@ public class PurchaseCommand implements LineCommand {
         } catch (NumberFormatException e) {
             return false;
         }
-        if (!arguments[3].matches("\\([A-Z]+\\)")) {
-            return false;
-        }
-        groupName = arguments[3].replaceAll("[()]", "");
-        return true;
+        personsTokens = PersonsResolver.tokenizePersonsArguments(Arrays.copyOfRange(arguments, 3, arguments.length));
+        return personsTokens.length != 0;
     }
 
     /**
-     * execute the purchase, if command argumetns valid and group exists.
+     * execute the purchase, if command arguments valid and group exists.
      * @param expensesModel the application model data
      */
     @Override
     public void execute(ExpensesModel expensesModel) {
-        if (invalid || amount == 0 || expensesModel.getGroups().get(groupName) == null) {
+        if (invalid || amount == 0) {
             printer.printError(ERROR_INVALID);
         } else {
-            executeGroupSplit(expensesModel);
+            Collection<String> personsToSplit =
+                    PersonsResolver.resolvePersonsFromTokens(personsTokens, expensesModel.getGroups());
+            if (personsToSplit.isEmpty()) {
+                printer.printError("group is empty");
+            } else {
+                executeGroupSplit(expensesModel, personsToSplit);
+            }
         }
     }
 
     /**
      * split the amount by cent division and distribute possible remainder cent-wise to first persons in group.
      * Method also handles the case, when the payer belongs to the group; then no transaction is created for her share.
-     * @param expensesModel the model data
+     * @param expensesModel  the model data
+     * @param personsToSplit group of person names for splitting the amount.
      */
-    private void executeGroupSplit(ExpensesModel expensesModel) {
-        Group group = expensesModel.getGroups().get(groupName);
-        long splitAmount = amount / group.size();
-        long remainingCents = amount % group.size();
-        for (String person : group) {
+    private void executeGroupSplit(ExpensesModel expensesModel, Collection<String> personsToSplit) {
+        long splitAmount = amount / personsToSplit.size();
+        long remainingCents = amount % personsToSplit.size();
+        for (String person : personsToSplit) {
             if (!person.equals(payer)) {
                 executeBorrowTransaction(expensesModel.getTransactions(), person,
                         remainingCents > 0 ? splitAmount + 1: splitAmount);

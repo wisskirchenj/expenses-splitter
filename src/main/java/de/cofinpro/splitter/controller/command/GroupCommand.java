@@ -1,11 +1,14 @@
 package de.cofinpro.splitter.controller.command;
 
+import de.cofinpro.splitter.controller.PersonsResolver;
 import de.cofinpro.splitter.io.ConsolePrinter;
 import de.cofinpro.splitter.model.ExpensesModel;
 import de.cofinpro.splitter.model.Group;
 import de.cofinpro.splitter.model.Groups;
 
-import java.util.Arrays;
+import java.util.*;
+
+import static de.cofinpro.splitter.controller.command.GroupCommand.Type.*;
 
 /**
  * LineCommand implementation of "group" command to create and display (show) groups of persons.
@@ -15,10 +18,10 @@ public class GroupCommand implements LineCommand {
     private static final String UNKNOWN_GROUP = "Unknown group";
 
     private final ConsolePrinter printer;
-    private boolean isCreate = false;
+    private Type type;
     private final boolean invalid;
     private String groupName;
-    private String[] groupMembers;
+    private String[] personsTokens;
 
     public GroupCommand(ConsolePrinter printer, String[] arguments) {
         this.printer = printer;
@@ -28,9 +31,10 @@ public class GroupCommand implements LineCommand {
     /**
      * validates and processes the arguments given:
      * - not less than 2 arguments,
-     * - groupname (arg 1) is UPPERCASE
-     * - if "show" (arg 0) selected, then only groupname given
-     * - if "create" (arg 0) selected, then more than 2 arguments needed, where arguments from 3 on define the group members.
+     * - group name (arg 1) is UPPERCASE
+     * - group command type is valid
+     * - if "show" (arg 0) selected, then only group name given
+     * - if "create, add, remove" (arg 0) selected, then more than 2 arguments needed, where arguments from 3 on define the group members.
      * @param arguments arguments to be processed and validated
      * @return validation result.
      */
@@ -42,29 +46,21 @@ public class GroupCommand implements LineCommand {
         if (!groupName.equals(groupName.toUpperCase())) {
             return false;
         }
-        if (arguments[0].equalsIgnoreCase("show") && arguments.length == 2) {
-            return true;
-        }
-        if (!arguments[0].equalsIgnoreCase("create") || arguments.length == 2) {
+        try {
+            type = Type.valueOf(arguments[0].toUpperCase());
+        } catch (IllegalArgumentException e) {
             return false;
         }
-        isCreate = true;
-        return validGroupMembersProcessed(Arrays.copyOfRange(arguments, 2, arguments.length));
-    }
-
-    /**
-     * format validates and processes the group members given into the field level array group members.
-     * @param memberArgs the last arguments of the command line, that should specify the group members
-     * @return false, if syntax error, true if members could be processed.
-     */
-    private boolean validGroupMembersProcessed(String[] memberArgs) {
-        String groupArg = String.join("", memberArgs);
-        if (!groupArg.matches("\\((\\w+,)*+\\w+\\)")) {
+        if (type == SHOW) {
+            // show must NOT have further arguments beside the group
+            return arguments.length == 2;
+        }
+        if (arguments.length == 2) {
+            // all other commands need further argument(s)
             return false;
         }
-        groupArg = groupArg.replaceAll("[()]", "");
-        groupMembers = groupArg.split(",");
-        return true;
+        personsTokens = PersonsResolver.tokenizePersonsArguments(Arrays.copyOfRange(arguments, 2, arguments.length));
+        return personsTokens.length != 0;
     }
 
     @Override
@@ -73,15 +69,25 @@ public class GroupCommand implements LineCommand {
             printer.printError(ERROR_INVALID);
             return;
         }
-        if (isCreate) {
-            createGroup(expensesModel.getGroups());
-        } else {
-            showGroup(expensesModel.getGroups());
+        switch (type) {
+            case SHOW -> showGroup(expensesModel.getGroups());
+            case REMOVE -> removeFromGroup(expensesModel.getGroups());
+            case ADD, CREATE -> addToGroup(expensesModel.getGroups());
         }
     }
 
-    private void createGroup(Groups groups) {
-        groups.put(groupName, new Group(groupMembers));
+    private void removeFromGroup(Groups groups) {
+        Group group = groups.get(groupName);
+        if (group == null) {
+            return;
+        }
+        group.removeAll(PersonsResolver.resolvePersonsFromTokens(personsTokens, groups));
+    }
+
+    private void addToGroup(Groups groups) {
+        Group group = groups.getOrDefault(groupName, Group.empty());
+        group.addAll(PersonsResolver.resolvePersonsFromTokens(personsTokens, groups));
+        groups.put(groupName, group);
     }
 
     /**
@@ -93,7 +99,14 @@ public class GroupCommand implements LineCommand {
         if (group == null) {
             printer.printError(UNKNOWN_GROUP);
         } else {
+            if (group.isEmpty()) {
+                printer.printInfo("group is empty");
+            }
             group.forEach(printer::printInfo);
         }
+    }
+
+    enum Type {
+        SHOW, CREATE, ADD, REMOVE
     }
 }

@@ -84,4 +84,52 @@ class GroupCommandTest {
         assertEquals(1, expensesModel.getGroups().size());
         assertEquals(new Group("Franz", "Sabine", "Hans"), newGroup);
     }
+
+    @Test
+    void whenAddMembers_MembersAdded() {
+        String[] args = "create GROUP (Hans, Franz, Sabine)".split(" ");
+        GroupCommand groupCommand = new GroupCommand(printer, args);
+        groupCommand.execute(expensesModel);
+        args = "add GROUP (-Anton, Eugen, +Ina)".split(" ");
+        groupCommand = new GroupCommand(printer, args);
+        groupCommand.execute(expensesModel);
+        Group addedGroup = expensesModel.getGroups().get("GROUP");
+        assertEquals(5, addedGroup.size());
+        assertEquals(new Group("Franz", "Sabine", "Hans", "Eugen", "Ina"), addedGroup);
+    }
+
+    @Test
+    void whenGroupAdd_MembersAdded() {
+        String[] args = "create GROUP (Hans, Franz, Sabine)".split(" ");
+        GroupCommand groupCommand = new GroupCommand(printer, args);
+        groupCommand.execute(expensesModel);
+        args = "create GIRLS (Anna, Laura, Tina)".split(" ");
+        groupCommand = new GroupCommand(printer, args);
+        groupCommand.execute(expensesModel);
+        args = "add GROUP (-Anna, GIRLS, +Ina)".split(" ");
+        groupCommand = new GroupCommand(printer, args);
+        groupCommand.execute(expensesModel);
+        Group addedGroup = expensesModel.getGroups().get("GROUP");
+        assertEquals(6, addedGroup.size());
+        assertEquals(new Group("Franz", "Sabine", "Hans", "Laura", "Ina", "Tina"), addedGroup);
+    }
+
+    @Test
+    void whenGroupRemove_MembersRemoved() {
+        String[] args = "create GROUP (Hans, Franz, Sabine)".split(" ");
+        GroupCommand groupCommand = new GroupCommand(printer, args);
+        groupCommand.execute(expensesModel);
+        args = "create GIRLS (Anna, Laura, Tina)".split(" ");
+        groupCommand = new GroupCommand(printer, args);
+        groupCommand.execute(expensesModel);
+        args = "add GROUP (-Anna, GIRLS)".split(" ");
+        groupCommand = new GroupCommand(printer, args);
+        groupCommand.execute(expensesModel);
+        assertEquals(5, expensesModel.getGroups().get("GROUP").size());
+        args = "remove GROUP (-Tina, GIRLS)".split(" ");
+        groupCommand = new GroupCommand(printer, args);
+        groupCommand.execute(expensesModel);
+        assertEquals(4, expensesModel.getGroups().get("GROUP").size());
+        assertEquals(new Group("Franz", "Sabine", "Hans", "Tina"), expensesModel.getGroups().get("GROUP"));
+    }
 }

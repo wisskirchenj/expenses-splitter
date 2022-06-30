@@ -171,4 +171,60 @@ class SplitterCommandLineRunnerIT {
         verify(printer, never()).printError(anyString());
         verify(printer, times(6)).printInfo(anyString());
     }
+
+    @Test
+    void exampleTest_Stage3() {
+        when(scanner.nextLine()).thenReturn("group create SOMEGROUP (Bob)",
+                "group create GIRLS (Ann, Diana, Ann)",
+                "group create BOYS (Bob, Chuck, Elon)",
+                "group add SOMEGROUP (GIRLS, Frank)",
+                "group remove SOMEGROUP (-BOYS, Bob, +Frank)",
+                "group show SOMEGROUP",
+                "exit");
+        splitterCommandLineRunner.run();
+        InOrder inOrder = Mockito.inOrder(printer);
+        inOrder.verify(printer).printInfo("Ann");
+        inOrder.verify(printer).printInfo("Bob");
+        inOrder.verify(printer).printInfo("Diana");
+        verify(printer, times(3)).printInfo(anyString());
+    }
+
+    @Test
+    void exampleEmptyTest_Stage3() {
+        when(scanner.nextLine()).thenReturn("group add SOMEGROUP (Bob)",
+                "group remove SOMEGROUP (Bob)",
+                "group show SOMEGROUP",
+                "exit");
+        splitterCommandLineRunner.run();
+        verify(printer).printInfo("group is empty");
+    }
+
+    @Test
+    void examplePurchaseTest_Stage3() {
+        when(scanner.nextLine()).thenReturn("group create GIRLS (Ann, Diana)",
+                "group create TEAM (+Bob, GIRLS, -Frank, Chuck)",
+                "2020.10.20 purchase Diana flowers 15.65 (TEAM, Elon, -GIRLS)",
+                "2020.10.21 purchase Elon ChuckBirthdayGift 20.99 (TEAM, -Chuck)",
+                "balance close",
+                "exit");
+        splitterCommandLineRunner.run();
+        verify(printer).printOwes(List.of("Ann owes Elon 7.00",
+                "Bob owes Diana 5.22",
+                "Bob owes Elon 7.00",
+                "Chuck owes Diana 5.22",
+                "Diana owes Elon 1.78"));
+        verify(printer, never()).printError(anyString());
+        verify(printer, times(5)).printInfo(anyString());
+    }
+
+
+    @Test
+    void exampleEmptyPurchase_PrintsGroupEmpty() {
+        when(scanner.nextLine()).thenReturn("group add SOMEGROUP (Bob, Franz)",
+                "group remove SOMEGROUP (+Franz)",
+                "2020.12.12 purchase Heini Lolly 20.34 (-Bob, +SOMEGROUP)",
+                "exit");
+        splitterCommandLineRunner.run();
+        verify(printer).printError("group is empty");
+    }
 }
