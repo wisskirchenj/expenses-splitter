@@ -61,5 +61,5 @@ CommandLineInterpreter and LineCommand Interface, Mockito Inorder Integration te
 splitting, also now transferred from integer transaction amounts to real
 money arithmetic on cents basis with rounding etc,
 
-30.06.22 Stage 3 completed, complicated group commands of adding, removing persons and groups added with
-their purchase. Streaming and groupingBy collectors applied.
+30.06.22 Stage 3 completed, complicated group commands of adding, removing persons and groups added for use in
+ purchase commands. Streaming and groupingBy collectors applied.
