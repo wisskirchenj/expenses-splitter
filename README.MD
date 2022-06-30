@@ -26,7 +26,7 @@ The sources of main project tasks (6 stages) and the unit, mockito, spring testi
 
 ## Program description
 
-Commands supported in stage 1:
+Commands presently supported:
 > [date] borrow PersonOne PersonTwo amount -> PersonTwo lent some amount to PersonOne on the specified date
 
 > [date] repay PersonOne PersonTwo amount -> PersonOne repaid an amount to PersonTwo on the date.
