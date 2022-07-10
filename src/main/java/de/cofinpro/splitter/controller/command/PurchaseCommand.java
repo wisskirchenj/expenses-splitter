@@ -2,7 +2,7 @@ package de.cofinpro.splitter.controller.command;
 
 import de.cofinpro.splitter.controller.PersonsResolver;
 import de.cofinpro.splitter.io.ConsolePrinter;
-import de.cofinpro.splitter.model.ExpensesModel;
+import de.cofinpro.splitter.model.Repositories;
 import de.cofinpro.splitter.model.Transactions;
 
 import java.time.LocalDate;
@@ -59,19 +59,19 @@ public class PurchaseCommand implements LineCommand {
 
     /**
      * execute the purchase, if command arguments valid and group exists.
-     * @param expensesModel the application model data
+     * @param repositories the application model data
      */
     @Override
-    public void execute(ExpensesModel expensesModel) {
+    public void execute(Repositories repositories) {
         if (invalid || amount == 0) {
             printer.printError(ERROR_INVALID);
         } else {
             Collection<String> personsToSplit =
-                    PersonsResolver.resolvePersonsFromTokens(personsTokens, expensesModel.getGroups());
+                    PersonsResolver.resolvePersonsFromTokens(personsTokens, repositories.getGroupRepository());
             if (personsToSplit.isEmpty()) {
                 printer.printError(EMPTY_GROUP);
             } else {
-                executeGroupSplit(expensesModel, personsToSplit);
+                executeGroupSplit(repositories, personsToSplit);
             }
         }
     }
@@ -79,15 +79,15 @@ public class PurchaseCommand implements LineCommand {
     /**
      * split the amount by cent division and distribute possible remainder cent-wise to first persons in group.
      * Method also handles the case, when the payer belongs to the group; then no transaction is created for her share.
-     * @param expensesModel  the model data
+     * @param repositories  the model data
      * @param personsToSplit group of person names for splitting the amount.
      */
-    private void executeGroupSplit(ExpensesModel expensesModel, Collection<String> personsToSplit) {
+    private void executeGroupSplit(Repositories repositories, Collection<String> personsToSplit) {
         long splitAmount = amount / personsToSplit.size();
         long remainingCents = amount % personsToSplit.size();
         for (String person : personsToSplit) {
             if (!person.equals(payerOrRefunder)) {
-                executeBorrowTransaction(expensesModel.getTransactions(), person,
+                executeBorrowTransaction(repositories.getTransactions(), person,
                         remainingCents > 0 ? splitAmount + 1: splitAmount);
             }
             remainingCents--;

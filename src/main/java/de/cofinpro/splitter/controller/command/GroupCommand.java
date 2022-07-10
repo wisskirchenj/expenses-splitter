@@ -2,13 +2,17 @@ package de.cofinpro.splitter.controller.command;
 
 import de.cofinpro.splitter.controller.PersonsResolver;
 import de.cofinpro.splitter.io.ConsolePrinter;
-import de.cofinpro.splitter.model.ExpensesModel;
-import de.cofinpro.splitter.model.Group;
-import de.cofinpro.splitter.model.Groups;
+import de.cofinpro.splitter.model.Repositories;
+import de.cofinpro.splitter.persistence.Group;
+import de.cofinpro.splitter.persistence.GroupRepository;
+import de.cofinpro.splitter.persistence.Person;
+import de.cofinpro.splitter.persistence.PersonRepository;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Set;
 
-import static de.cofinpro.splitter.controller.command.GroupCommand.Type.*;
+import static de.cofinpro.splitter.controller.command.GroupCommand.Type.CREATE;
+import static de.cofinpro.splitter.controller.command.GroupCommand.Type.SHOW;
 
 /**
  * LineCommand implementation of "group" command to create and display (show) groups of persons.
@@ -65,45 +69,60 @@ public class GroupCommand implements LineCommand {
     }
 
     @Override
-    public void execute(ExpensesModel expensesModel) {
+    public void execute(Repositories repositories) {
         if (invalid) {
             printer.printError(ERROR_INVALID);
             return;
         }
         switch (type) {
-            case SHOW -> showGroup(expensesModel.getGroups());
-            case REMOVE -> removeFromGroup(expensesModel.getGroups());
-            default -> addToGroup(expensesModel.getGroups());
+            case SHOW -> showGroup(repositories.getGroupRepository());
+            case REMOVE -> removeFromGroup(repositories.getGroupRepository());
+            default -> addToGroup(repositories);
         }
     }
 
-    private void removeFromGroup(Groups groups) {
-        Group group = groups.get(groupName);
-        if (group == null) {
+    private void removeFromGroup(GroupRepository repository) {
+        var groupOpt = repository.findByName(groupName);
+        if (groupOpt.isEmpty()) {
             return;
         }
-        group.removeAll(PersonsResolver.resolvePersonsFromTokens(personsTokens, groups));
+        Group group = groupOpt.get();
+        group.removeAll(PersonsResolver.resolvePersonsFromTokens(personsTokens, repository));
+        repository.save(group);
     }
 
-    private void addToGroup(Groups groups) {
-        Group group = groups.getOrDefault(groupName, Group.empty());
-        group.addAll(PersonsResolver.resolvePersonsFromTokens(personsTokens, groups));
-        groups.put(groupName, group);
+    public void addToGroup(Repositories repositories) {
+        GroupRepository groupRepository = repositories.getGroupRepository();
+        PersonRepository personRepository = repositories.getPersonRepository();
+        Group group = groupRepository.findByName(groupName).orElse(new Group().setName(groupName));
+        if (type == CREATE) {
+            group.getMembers().clear();
+        }
+        for (String name: PersonsResolver.resolvePersonsFromTokens(personsTokens, groupRepository)) {
+            var personOpt = personRepository.findByName(name);
+            if (personOpt.isPresent()) {
+                group.addMember(personOpt.get());
+            } else {
+                group.addMember(personRepository.save(new Person(name)));
+            }
+        }
+        groupRepository.save(group);
     }
 
     /**
      * show the group asked for with the command or print error, if group not found.
-     * @param groups the groups map bean.
+     * @param repository the group repository.
      */
-    private void showGroup(Groups groups) {
-        Group group = groups.get(groupName);
-        if (group == null) {
+    private void showGroup(GroupRepository repository) {
+        var groupOpt = repository.findByName(groupName);
+        if (groupOpt.isEmpty()) {
             printer.printError(UNKNOWN_GROUP);
         } else {
-            if (group.isEmpty()) {
+            Set<Person> members = groupOpt.get().getMembers();
+            if (members.isEmpty()) {
                 printer.printInfo(EMPTY_GROUP);
             }
-            group.forEach(printer::printInfo);
+            members.stream().map(Person::getName).forEach(printer::printInfo);
         }
     }
 

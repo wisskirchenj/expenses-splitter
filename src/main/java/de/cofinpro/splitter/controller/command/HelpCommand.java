@@ -1,7 +1,7 @@
 package de.cofinpro.splitter.controller.command;
 
 import de.cofinpro.splitter.io.ConsolePrinter;
-import de.cofinpro.splitter.model.ExpensesModel;
+import de.cofinpro.splitter.model.Repositories;
 
 import java.util.Arrays;
 
@@ -16,7 +16,7 @@ public class HelpCommand implements LineCommand {
     }
 
     @Override
-    public void execute(ExpensesModel expensesModel) {
+    public void execute(Repositories repositories) {
         Arrays.stream(CommandType.values())
                 .map(CommandType::getCommandName)
                 .sorted()

@@ -1,7 +1,7 @@
 package de.cofinpro.splitter.controller;
 
-import de.cofinpro.splitter.model.Group;
-import de.cofinpro.splitter.model.Groups;
+import de.cofinpro.splitter.persistence.GroupRepository;
+import de.cofinpro.splitter.persistence.Person;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -36,24 +36,32 @@ public class PersonsResolver {
      * to stream their group members if necessary - and the ones, that start with "-" and which are removed from the
      * result set after "flatmapping".
      * @param tokens the tokens associated to persons, previously tokenized
-     * @param groups the map of all groups created so far
+     * @param repository the group repository
      * @return the collection of persons after resolving groups, additions and subtractions
      */
-    public static Collection<String> resolvePersonsFromTokens(String[] tokens, Groups groups) {
-        Map<Boolean, List<String>> membersGrouped = Arrays.stream(tokens)
+    public static Collection<String> resolvePersonsFromTokens(String[] tokens, GroupRepository repository) {
+        Map<Boolean, List<String>> tokensGrouped = Arrays.stream(tokens)
                 .collect(Collectors.groupingBy(mem -> mem.startsWith("-")));
-        if (membersGrouped.get(false) == null) {
+        if (tokensGrouped.get(false) == null) {
             return Collections.emptySet();
         }
-        List<String> result = new ArrayList<>(membersGrouped.get(false).stream()
-                .flatMap(member -> groups.getOrDefault(member, new Group(member)).stream())
+        List<String> result = new ArrayList<>(tokensGrouped.get(false).stream()
+                .flatMap(token -> getPersons(repository, token).orElse(List.of(token)).stream())
                 .sorted().distinct()
                 .toList());
-        if (membersGrouped.get(true) != null) {
-            result.removeAll(membersGrouped.get(true).stream().map(mem -> mem.substring(1))
-                    .flatMap(member -> groups.getOrDefault(member, new Group(member)).stream())
+        if (tokensGrouped.get(true) != null) {
+            result.removeAll(tokensGrouped.get(true).stream().map(mem -> mem.substring(1))
+                    .flatMap(token -> getPersons(repository, token).orElse(List.of(token)).stream())
                     .sorted().distinct().toList());
         }
         return result;
+    }
+
+    private static Optional<List<String>> getPersons(GroupRepository repository, String token) {
+        var groupOpt = repository.findByName(token);
+        if (groupOpt.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(groupOpt.get().getMembers().stream().map(Person::getName).toList());
     }
 }

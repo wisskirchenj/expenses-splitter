@@ -1,7 +1,7 @@
 package de.cofinpro.splitter.controller;
 
 import de.cofinpro.splitter.controller.command.LineCommand;
-import de.cofinpro.splitter.model.ExpensesModel;
+import de.cofinpro.splitter.model.Repositories;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -15,20 +15,20 @@ import org.springframework.stereotype.Component;
 public class SplitterCommandLineRunner implements CommandLineRunner {
 
     private final CommandLineInterpreter commandLineInterpreter;
-    private final ExpensesModel expensesModel;
+    private final Repositories repositories;
 
     @Autowired
     public SplitterCommandLineRunner(CommandLineInterpreter commandLineInterpreter,
-                                     ExpensesModel expensesModel) {
+                                     Repositories repositories) {
         this.commandLineInterpreter = commandLineInterpreter;
-        this.expensesModel = expensesModel;
+        this.repositories = repositories;
     }
 
     @Override
     public void run(String... args) {
         LineCommand command = commandLineInterpreter.parseNext();
         while (!command.isExit()) {
-            command.execute(expensesModel);
+            command.execute(repositories);
             command = commandLineInterpreter.parseNext();
         }
     }

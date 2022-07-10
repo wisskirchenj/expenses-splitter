@@ -1,6 +1,6 @@
 package de.cofinpro.splitter.controller.command;
 
-import de.cofinpro.splitter.model.ExpensesModel;
+import de.cofinpro.splitter.model.Repositories;
 
 import java.time.LocalDate;
 
@@ -13,7 +13,7 @@ public class WriteOffCommand implements LineCommand {
     }
 
     @Override
-    public void execute(ExpensesModel expensesModel) {
-        expensesModel.getTransactions().writeOff(limitDate);
+    public void execute(Repositories repositories) {
+        repositories.getTransactions().writeOff(limitDate);
     }
 }

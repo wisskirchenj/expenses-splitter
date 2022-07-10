@@ -6,14 +6,15 @@ import de.cofinpro.splitter.controller.command.CommandType;
 import de.cofinpro.splitter.controller.command.LineCommand;
 import de.cofinpro.splitter.io.CommandLineConfiguration;
 import de.cofinpro.splitter.io.ConsolePrinter;
-import de.cofinpro.splitter.model.ExpensesModel;
-import de.cofinpro.splitter.model.Groups;
-import de.cofinpro.splitter.model.Transactions;
+import de.cofinpro.splitter.model.Repositories;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 import java.util.Scanner;
@@ -22,11 +23,16 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
+@SpringBootTest
+@Disabled
 @ExtendWith(MockitoExtension.class)
 class SplitterCommandLineRunnerIT {
 
     @Mock
     Scanner scanner;
+
+    @Autowired
+    Repositories repositories;
 
     @Spy
     ConsolePrinter printer;
@@ -34,14 +40,14 @@ class SplitterCommandLineRunnerIT {
     @Captor
     ArgumentCaptor<String> printCaptor;
 
+
     SplitterCommandLineRunner splitterCommandLineRunner;
 
     @BeforeEach
     void setUp() {
         splitterCommandLineRunner = new SplitterCommandLineRunner(
-                new CommandLineInterpreter(scanner, printer,
-                        new CommandLineConfiguration().getDateFormatter()),
-                new ExpensesModel(new Transactions(), new Groups())
+                new CommandLineInterpreter(scanner, printer, new CommandLineConfiguration().getDateFormatter()),
+                repositories
         );
     }
 

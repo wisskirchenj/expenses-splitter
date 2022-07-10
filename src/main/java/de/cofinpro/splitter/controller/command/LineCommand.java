@@ -1,6 +1,6 @@
 package de.cofinpro.splitter.controller.command;
 
-import de.cofinpro.splitter.model.ExpensesModel;
+import de.cofinpro.splitter.model.Repositories;
 
 /**
  * Command-pattern interface: implementing classes are executable (Concrete) LineCommands
@@ -14,7 +14,7 @@ public interface LineCommand {
      * execute the command. Gets the complete application expemnses model as parameters, so the commands have access to
      * the created transactions as well as groups.
      */
-    void execute(ExpensesModel expensesModel);
+    void execute(Repositories repositories);
 
     default boolean isExit() {
         return false;

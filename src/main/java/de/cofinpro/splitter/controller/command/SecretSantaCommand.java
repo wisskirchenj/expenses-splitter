@@ -1,10 +1,10 @@
 package de.cofinpro.splitter.controller.command;
 
+import de.cofinpro.splitter.controller.PersonsResolver;
 import de.cofinpro.splitter.io.ConsolePrinter;
-import de.cofinpro.splitter.model.ExpensesModel;
-import de.cofinpro.splitter.model.Group;
-import de.cofinpro.splitter.model.Groups;
 import de.cofinpro.splitter.model.PersonPair;
+import de.cofinpro.splitter.model.Repositories;
+import de.cofinpro.splitter.persistence.GroupRepository;
 
 import java.util.*;
 
@@ -34,29 +34,33 @@ public class SecretSantaCommand implements LineCommand {
     }
 
     @Override
-    public void execute(ExpensesModel expensesModel) {
+    public void execute(Repositories repositories) {
         if (invalid) {
             printer.printError(ERROR_INVALID);
             return;
         }
-        executeGiftAssignment(expensesModel.getGroups());
+        executeGiftAssignment(repositories.getGroupRepository());
     }
 
-    private void executeGiftAssignment(Groups groups) {
-        Group group = groups.get(groupName);
-        if (group == null) {
+    private void executeGiftAssignment(GroupRepository repository) {
+        var groupOpt = repository.findByName(groupName);
+        if (groupOpt.isEmpty()) {
             printer.printError(UNKNOWN_GROUP);
-        } else if (group.size() <= 1) {
+            return;
+        }
+        Collection<String> members = PersonsResolver
+                .resolvePersonsFromTokens(new String[] {groupName}, repository);
+        if (members.size() <= 1) {
             printer.printError("group too small for santa gifts");
-        } else if (group.size() == 2) {
-            mutualGifts(group);
+        } else if (members.size() == 2) {
+            mutualGifts(members);
         } else {
-            shuffleGiftPairs(group);
+            shuffleGiftPairs(members);
         }
     }
 
 
-    private void shuffleGiftPairs(Group group) {
+    private void shuffleGiftPairs(Collection<String> group) {
         final Map<String, String> giftAssignments = new HashMap<>();
         do {
             giftAssignments.clear();
@@ -65,7 +69,7 @@ public class SecretSantaCommand implements LineCommand {
         group.forEach(person -> printGiftToLine(person, giftAssignments.get(person)));
     }
 
-    private boolean giftAssignmentNotValid(Map<String, String> assignments, Group group) {
+    private boolean giftAssignmentNotValid(Map<String, String> assignments, Collection<String> group) {
         for (String person: group) {
             String receiver = assignments.get(person);
             if (person.equals(receiver) || person.equals(assignments.get(receiver))) {
@@ -75,7 +79,7 @@ public class SecretSantaCommand implements LineCommand {
         return false;
     }
 
-    private void tryShuffle(Map<String, String> assignments, Group group) {
+    private void tryShuffle(Map<String, String> assignments, Collection<String> group) {
         List<String> receivers = new ArrayList<>(group);
         for (String person: group) {
             int remainingReceivers = receivers.size();
@@ -85,8 +89,9 @@ public class SecretSantaCommand implements LineCommand {
         }
     }
 
-    private void mutualGifts(Group group) {
-        PersonPair pair = new PersonPair(group.first(), group.last());
+    private void mutualGifts(Collection<String> group) {
+        String[] persons = group.toArray(new String[0]);
+        PersonPair pair = new PersonPair(persons[0], persons[1]);
         printGiftToLine(pair.getFirst(), pair.getSecond());
         printGiftToLine(pair.getSecond(), pair.getFirst());
     }
