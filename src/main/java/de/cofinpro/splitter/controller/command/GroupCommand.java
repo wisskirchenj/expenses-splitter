@@ -15,7 +15,8 @@ import static de.cofinpro.splitter.controller.command.GroupCommand.Type.*;
  */
 public class GroupCommand implements LineCommand {
 
-    private static final String UNKNOWN_GROUP = "Unknown group";
+    static final String UNKNOWN_GROUP = "Unknown group";
+    static final String EMPTY_GROUP = "group is empty";
 
     private final ConsolePrinter printer;
     private Type type;
@@ -72,7 +73,7 @@ public class GroupCommand implements LineCommand {
         switch (type) {
             case SHOW -> showGroup(expensesModel.getGroups());
             case REMOVE -> removeFromGroup(expensesModel.getGroups());
-            case ADD, CREATE -> addToGroup(expensesModel.getGroups());
+            default -> addToGroup(expensesModel.getGroups());
         }
     }
 
@@ -100,7 +101,7 @@ public class GroupCommand implements LineCommand {
             printer.printError(UNKNOWN_GROUP);
         } else {
             if (group.isEmpty()) {
-                printer.printInfo("group is empty");
+                printer.printInfo(EMPTY_GROUP);
             }
             group.forEach(printer::printInfo);
         }

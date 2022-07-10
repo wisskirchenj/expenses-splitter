@@ -18,8 +18,7 @@ public class HelpCommand implements LineCommand {
     @Override
     public void execute(ExpensesModel expensesModel) {
         Arrays.stream(CommandType.values())
-                .map(CommandType::name)
-                .map(String::toLowerCase)
+                .map(CommandType::getCommandName)
                 .sorted()
                 .forEach(printer::printInfo);
     }

@@ -1,15 +1,6 @@
 package de.cofinpro.splitter.controller;
 
-import de.cofinpro.splitter.controller.command.BalanceCommand;
-import de.cofinpro.splitter.controller.command.BorrowCommand;
-import de.cofinpro.splitter.controller.command.ExitCommand;
-import de.cofinpro.splitter.controller.command.GroupCommand;
-import de.cofinpro.splitter.controller.command.HelpCommand;
-import de.cofinpro.splitter.controller.command.InvalidCommand;
-import de.cofinpro.splitter.controller.command.LineCommand;
-import de.cofinpro.splitter.controller.command.PurchaseCommand;
-import de.cofinpro.splitter.controller.command.RepayCommand;
-import de.cofinpro.splitter.controller.command.UnknownCommand;
+import de.cofinpro.splitter.controller.command.*;
 import de.cofinpro.splitter.io.ConsolePrinter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -59,6 +50,8 @@ public class CommandLineInterpreter {
             case "balance" -> new BalanceCommand(printer, commandDate, commandArgs);
             case "purchase" -> new PurchaseCommand(printer, commandDate, commandArgs);
             case "group" -> new GroupCommand(printer, commandArgs);
+            case "secretsanta" -> new SecretSantaCommand(printer, commandArgs);
+            case "writeoff" -> tokens.size() == 1 ? new WriteOffCommand(commandDate) : new InvalidCommand(printer);
             case "help" -> tokens.size() == 1 ? new HelpCommand(printer) : new InvalidCommand(printer);
             case "exit" -> tokens.size() == 1 ? new ExitCommand() : new InvalidCommand(printer);
             default -> new UnknownCommand(printer);

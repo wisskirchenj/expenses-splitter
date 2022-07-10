@@ -12,15 +12,15 @@ import de.cofinpro.splitter.model.Transactions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InOrder;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.Spy;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -31,6 +31,9 @@ class SplitterCommandLineRunnerIT {
 
     @Spy
     ConsolePrinter printer;
+
+    @Captor
+    ArgumentCaptor<String> printCaptor;
 
     SplitterCommandLineRunner splitterCommandLineRunner;
 
@@ -50,11 +53,14 @@ class SplitterCommandLineRunnerIT {
         InOrder inOrder = Mockito.inOrder(printer);
         inOrder.verify(printer).printInfo("balance");
         inOrder.verify(printer).printInfo("borrow");
+        inOrder.verify(printer).printInfo("cashBack");
         inOrder.verify(printer).printInfo("exit");
         inOrder.verify(printer).printInfo("group");
         inOrder.verify(printer).printInfo("help");
         inOrder.verify(printer).printInfo("purchase");
         inOrder.verify(printer).printInfo("repay");
+        inOrder.verify(printer).printInfo("secretSanta");
+        inOrder.verify(printer).printInfo("writeOff");
         verify(printer, times(CommandType.values().length)).printInfo(anyString());
     }
 
@@ -226,5 +232,41 @@ class SplitterCommandLineRunnerIT {
                 "exit");
         splitterCommandLineRunner.run();
         verify(printer).printError("group is empty");
+    }
+
+    @Test
+    void exampleSecretSanta_Stage4() {
+        when(scanner.nextLine()).thenReturn("group create SOMESANTAGROUP (Gordon, Bob, Ann, Chuck, Elon, Diana, Foxy)",
+                "secretSanta SOMESANTAGROUP",
+                "exit");
+        splitterCommandLineRunner.run();
+        verify(printer, times(7)).printInfo(printCaptor.capture());
+        String receivers = printCaptor.getAllValues().stream().map(line -> line.substring(line.lastIndexOf(' ')))
+                .collect(Collectors.joining());
+        String gifters = printCaptor.getAllValues().stream()
+                .map(line -> line.substring(0, line.indexOf(' ')))
+                .collect(Collectors.joining());
+        for (String person: new String[] {"Gordon", "Bob", "Ann", "Chuck", "Elon", "Diana", "Foxy"}) {
+            assertTrue(gifters.contains(person));
+            assertTrue(receivers.contains(person));
+        }
+    }
+
+    @Test
+    void exampleWriteOff_Stage4() {
+        when(scanner.nextLine()).thenReturn("borrow Ann Bob 1.00",
+                "3030.03.30 purchase Bob coffee 3.50 (Bob, Ann)",
+                "writeOff",
+                "balance close",
+                "3030.03.30 balance close",
+                "3030.03.30 writeOff",
+                "3030.03.30 balance close",
+                "exit");
+        splitterCommandLineRunner.run();
+        verify(printer, times(3)).printInfo(printCaptor.capture());
+        InOrder inOrder = Mockito.inOrder(printer);
+        inOrder.verify(printer).printInfo("No repayments");
+        inOrder.verify(printer).printInfo("Ann owes Bob 1.75");
+        inOrder.verify(printer).printInfo("No repayments");
     }
 }

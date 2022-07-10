@@ -9,6 +9,8 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collection;
 
+import static de.cofinpro.splitter.controller.command.GroupCommand.EMPTY_GROUP;
+
 /**
  * LineCommand implementation of the "purchase" command, used to create a purchase of one person for a group,
  * that is distributed in the command execution into adequate mutual borrow transactions.
@@ -60,7 +62,7 @@ public class PurchaseCommand implements LineCommand {
             Collection<String> personsToSplit =
                     PersonsResolver.resolvePersonsFromTokens(personsTokens, expensesModel.getGroups());
             if (personsToSplit.isEmpty()) {
-                printer.printError("group is empty");
+                printer.printError(EMPTY_GROUP);
             } else {
                 executeGroupSplit(expensesModel, personsToSplit);
             }
