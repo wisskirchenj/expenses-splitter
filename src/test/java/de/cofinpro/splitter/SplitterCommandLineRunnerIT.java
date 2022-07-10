@@ -17,7 +17,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Scanner;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -263,10 +262,42 @@ class SplitterCommandLineRunnerIT {
                 "3030.03.30 balance close",
                 "exit");
         splitterCommandLineRunner.run();
-        verify(printer, times(3)).printInfo(printCaptor.capture());
+        verify(printer, times(3)).printInfo(anyString());
         InOrder inOrder = Mockito.inOrder(printer);
         inOrder.verify(printer).printInfo("No repayments");
         inOrder.verify(printer).printInfo("Ann owes Bob 1.75");
         inOrder.verify(printer).printInfo("No repayments");
+    }
+
+    @Test
+    void exampleCashBack_Stage4() {
+        when(scanner.nextLine()).thenReturn("2020.12.24 borrow Ann Frank 2000.10",
+                "2020.12.25 writeOff",
+                "group create TEAM (Bob, Ann, Frank, Chuck, Elon, Diana)",
+                " 2020.12.25 cashBack YourCompany secretSantaGift 24.00 (TEAM)",
+                "2020.12.25 balance close",
+                "exit");
+        splitterCommandLineRunner.run();
+        verify(printer).printOwes(List.of("YourCompany owes Ann 4.00",
+                "YourCompany owes Bob 4.00",
+                "YourCompany owes Chuck 4.00",
+                "YourCompany owes Diana 4.00",
+                "YourCompany owes Elon 4.00",
+                "YourCompany owes Frank 4.00"));
+    }
+
+    @Test
+    void otherExampleCashBack_Stage4() {
+        when(scanner.nextLine()).thenReturn("2020.12.24 borrow Ann Frank 2000.10",
+                "2020.12.25 writeOff",
+                "group create TEAM (Bob, Ann, Frank, Chuck, Elon, Diana)",
+                " 2020.12.25 cashBack YourCompany secretSantaGift 24.00 (-Ann, +TEAM, -Diana)",
+                "2020.12.25 balance close",
+                "exit");
+        splitterCommandLineRunner.run();
+        verify(printer).printOwes(List.of("YourCompany owes Bob 6.00",
+                "YourCompany owes Chuck 6.00",
+                "YourCompany owes Elon 6.00",
+                "YourCompany owes Frank 6.00"));
     }
 }

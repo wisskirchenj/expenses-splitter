@@ -38,7 +38,7 @@ public class CommandLineInterpreter {
      * @return the created command found as parse result.
      */
     public LineCommand parseNext() {
-        List<String> tokens = new ArrayList<>(Arrays.asList(scanner.nextLine().split("\\s+")));
+        List<String> tokens = new ArrayList<>(Arrays.asList(scanner.nextLine().trim().split("\\s+")));
         LocalDate commandDate = getDateAndRemoveFromList(tokens);
         if (tokens.isEmpty()) {
             return new UnknownCommand(printer);
@@ -49,6 +49,7 @@ public class CommandLineInterpreter {
             case "repay" -> new RepayCommand(printer,  commandDate, commandArgs);
             case "balance" -> new BalanceCommand(printer, commandDate, commandArgs);
             case "purchase" -> new PurchaseCommand(printer, commandDate, commandArgs);
+            case "cashback" -> new PurchaseCommand(printer, commandDate, true, commandArgs);
             case "group" -> new GroupCommand(printer, commandArgs);
             case "secretsanta" -> new SecretSantaCommand(printer, commandArgs);
             case "writeoff" -> tokens.size() == 1 ? new WriteOffCommand(commandDate) : new InvalidCommand(printer);

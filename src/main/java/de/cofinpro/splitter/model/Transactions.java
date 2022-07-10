@@ -3,7 +3,9 @@ package de.cofinpro.splitter.model;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 
 import static java.util.function.Predicate.not;
 
@@ -63,17 +65,7 @@ public class Transactions extends HashMap<PersonPair, PairTransactions> {
      * @param limit limit date
      */
     public void writeOff(LocalDate limit) {
-        forEach((key, value) -> writeOff(value, limit));
-    }
-
-    private void writeOff(PairTransactions transactions, LocalDate limit) {
-        ListIterator<MoneyTransfer> iterator = transactions.listIterator();
-        while (iterator.hasNext()) {
-            MoneyTransfer transaction = iterator.next();
-            if (transaction.getDate().isAfter(limit)) {
-                break;
-            }
-            iterator.remove();
-        }
+        forEach((key, transactions) ->
+                transactions.removeIf(transaction -> !transaction.getDate().isAfter(limit)));
     }
 }

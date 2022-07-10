@@ -20,13 +20,20 @@ public class PurchaseCommand implements LineCommand {
     private final ConsolePrinter printer;
     private final boolean invalid;
     private final LocalDate date;
+    private final boolean isCashback;
     private long amount;
-    private String payer;
+    private String payerOrRefunder;
     private String[] personsTokens;
 
     public PurchaseCommand(ConsolePrinter printer, LocalDate date, String[] arguments) {
+        this(printer,date,false, arguments);
+    }
+
+
+    public PurchaseCommand(ConsolePrinter printer, LocalDate date, boolean isCashback, String[] arguments) {
         this.printer = printer;
         this.date = date;
+        this.isCashback = isCashback;
         invalid = !validClArgumentsProcessed(arguments);
     }
 
@@ -40,7 +47,7 @@ public class PurchaseCommand implements LineCommand {
         if (arguments.length < 4) {
             return false;
         }
-        payer = arguments[0];
+        payerOrRefunder = arguments[0];
         try {
             this.amount = getCentsFromDecimalInput(arguments[2]);
         } catch (NumberFormatException e) {
@@ -79,7 +86,7 @@ public class PurchaseCommand implements LineCommand {
         long splitAmount = amount / personsToSplit.size();
         long remainingCents = amount % personsToSplit.size();
         for (String person : personsToSplit) {
-            if (!person.equals(payer)) {
+            if (!person.equals(payerOrRefunder)) {
                 executeBorrowTransaction(expensesModel.getTransactions(), person,
                         remainingCents > 0 ? splitAmount + 1: splitAmount);
             }
@@ -88,7 +95,8 @@ public class PurchaseCommand implements LineCommand {
     }
 
     private void executeBorrowTransaction(Transactions transactions, String borrower, long centAmount) {
-            new BorrowCommand(printer, date, new String[] {borrower, payer, String.valueOf(centAmount / 100.0)})
+        String transactionAmount = String.valueOf((isCashback ? centAmount * -1 : centAmount) / 100.0);
+        new BorrowCommand(printer, date, new String[] {borrower, payerOrRefunder, transactionAmount})
                     .executeMoneyTransfer(transactions);
     }
 }
