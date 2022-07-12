@@ -1,8 +1,9 @@
 package de.cofinpro.splitter.controller.command;
 
 import de.cofinpro.splitter.io.ConsolePrinter;
+import de.cofinpro.splitter.model.PersonPair;
 import de.cofinpro.splitter.model.Repositories;
-import de.cofinpro.splitter.model.Transactions;
+import de.cofinpro.splitter.persistence.Transaction;
 
 import java.time.LocalDate;
 
@@ -53,13 +54,22 @@ public abstract class PayCommand implements LineCommand {
         if (invalid || amount == 0) {
             printer.printError(ERROR_INVALID);
         } else {
-            executeMoneyTransfer(repositories.getTransactions());
+            executeMoneyTransfer(repositories);
         }
+    }
+
+    protected void addTransaction(Repositories repositories, PersonPair personPair) {
+        Transaction transaction = new Transaction()
+                .setFirst(repositories.getPersonRepository().findByNameOrCreate(personPair.getFirst()))
+                .setSecond(repositories.getPersonRepository().findByNameOrCreate(personPair.getSecond()))
+                .setDate(date)
+                .setAmount(amount);
+        repositories.getTransactionRepository().save(transaction);
     }
 
     /**
      * do the happy path execution of money transfer.
-     * @param transactions map of all transactions.
+     * @param repositories the repositories.
      */
-    protected abstract void executeMoneyTransfer(Transactions transactions);
+    protected abstract void executeMoneyTransfer(Repositories repositories);
 }

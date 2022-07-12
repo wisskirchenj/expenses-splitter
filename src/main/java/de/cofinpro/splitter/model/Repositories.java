@@ -2,6 +2,7 @@ package de.cofinpro.splitter.model;
 
 import de.cofinpro.splitter.persistence.GroupRepository;
 import de.cofinpro.splitter.persistence.PersonRepository;
+import de.cofinpro.splitter.persistence.TransactionRepository;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,13 +15,14 @@ import org.springframework.stereotype.Component;
 @Data
 public class Repositories {
 
-    private final Transactions transactions;
+    private final TransactionRepository transactionRepository;
     private final GroupRepository groupRepository;
     private final PersonRepository personRepository;
 
     @Autowired
-    public Repositories(Transactions transactions, GroupRepository groupRepository, PersonRepository personRepository) {
-        this.transactions = transactions;
+    public Repositories(TransactionRepository transactionRepository, GroupRepository groupRepository,
+                        PersonRepository personRepository) {
+        this.transactionRepository = transactionRepository;
         this.groupRepository = groupRepository;
         this.personRepository = personRepository;
     }

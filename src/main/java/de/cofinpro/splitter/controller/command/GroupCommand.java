@@ -6,7 +6,6 @@ import de.cofinpro.splitter.model.Repositories;
 import de.cofinpro.splitter.persistence.Group;
 import de.cofinpro.splitter.persistence.GroupRepository;
 import de.cofinpro.splitter.persistence.Person;
-import de.cofinpro.splitter.persistence.PersonRepository;
 
 import java.util.Arrays;
 import java.util.Set;
@@ -93,18 +92,13 @@ public class GroupCommand implements LineCommand {
 
     public void addToGroup(Repositories repositories) {
         GroupRepository groupRepository = repositories.getGroupRepository();
-        PersonRepository personRepository = repositories.getPersonRepository();
         Group group = groupRepository.findByName(groupName).orElse(new Group().setName(groupName));
         if (type == CREATE) {
             group.getMembers().clear();
         }
+
         for (String name: PersonsResolver.resolvePersonsFromTokens(personsTokens, groupRepository)) {
-            var personOpt = personRepository.findByName(name);
-            if (personOpt.isPresent()) {
-                group.addMember(personOpt.get());
-            } else {
-                group.addMember(personRepository.save(new Person(name)));
-            }
+            group.addMember(repositories.getPersonRepository().findByNameOrCreate(name));
         }
         groupRepository.save(group);
     }

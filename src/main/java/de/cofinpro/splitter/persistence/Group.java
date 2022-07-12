@@ -27,7 +27,7 @@ public class Group {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinTable(name = "GROUP_MEMBERS",
             joinColumns = @JoinColumn(name = "id", referencedColumnName = "id"))
     @OrderBy("name ASC")

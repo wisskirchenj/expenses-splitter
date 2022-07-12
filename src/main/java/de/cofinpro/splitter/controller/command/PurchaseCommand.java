@@ -3,7 +3,6 @@ package de.cofinpro.splitter.controller.command;
 import de.cofinpro.splitter.controller.PersonsResolver;
 import de.cofinpro.splitter.io.ConsolePrinter;
 import de.cofinpro.splitter.model.Repositories;
-import de.cofinpro.splitter.model.Transactions;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -87,16 +86,16 @@ public class PurchaseCommand implements LineCommand {
         long remainingCents = amount % personsToSplit.size();
         for (String person : personsToSplit) {
             if (!person.equals(payerOrRefunder)) {
-                executeBorrowTransaction(repositories.getTransactions(), person,
+                executeBorrowTransaction(repositories, person,
                         remainingCents > 0 ? splitAmount + 1: splitAmount);
             }
             remainingCents--;
         }
     }
 
-    private void executeBorrowTransaction(Transactions transactions, String borrower, long centAmount) {
+    private void executeBorrowTransaction(Repositories repositories, String borrower, long centAmount) {
         String transactionAmount = String.valueOf((isCashback ? centAmount * -1 : centAmount) / 100.0);
         new BorrowCommand(printer, date, new String[] {borrower, payerOrRefunder, transactionAmount})
-                    .executeMoneyTransfer(transactions);
+                    .executeMoneyTransfer(repositories);
     }
 }

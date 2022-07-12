@@ -9,4 +9,8 @@ import java.util.Optional;
 public interface PersonRepository extends JpaRepository<Person, Long> {
 
     Optional<Person> findByName(String name);
+
+    default Person findByNameOrCreate(String name) {
+        return findByName(name).orElseGet(() -> save(new Person(name)));
+    }
 }

@@ -1,9 +1,12 @@
 package de.cofinpro.splitter.controller.command;
 
 import de.cofinpro.splitter.io.ConsolePrinter;
+import de.cofinpro.splitter.model.PairBalance;
 import de.cofinpro.splitter.model.Repositories;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * implementation of LineCommand for the "balance" command execution.
@@ -47,14 +50,21 @@ public class BalanceCommand implements LineCommand {
 
     /** if valid arguments were given,
      * get all balance texts from the overall transactions and hand them over for printing.
-     * @param repositories the model data with the transactions map
+     * @param repositories the repositories
      */
     @Override
     public void execute(Repositories repositories) {
         if (invalid) {
             printer.printError(ERROR_INVALID);
         } else {
-            printer.printOwes(repositories.getTransactions().getBalances(balanceDate));
+            List<PairBalance> balances = repositories.getTransactionRepository().getBalances(balanceDate);
+            printer.printOwes(balances.stream().map(this::getOwesText).sorted().toList());
         }
+    }
+
+    private String getOwesText(PairBalance pairBalance) {
+        String ower = pairBalance.getBalance() < 0 ? pairBalance.getSecondPerson() : pairBalance.getFirstPerson();
+        String owee = pairBalance.getBalance() < 0 ? pairBalance.getFirstPerson() : pairBalance.getSecondPerson();
+        return String.format(Locale.US, "%s owes %s %.2f", ower, owee, Math.abs(pairBalance.getBalance()) / 100.0);
     }
 }

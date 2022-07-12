@@ -14,6 +14,6 @@ public class WriteOffCommand implements LineCommand {
 
     @Override
     public void execute(Repositories repositories) {
-        repositories.getTransactions().writeOff(limitDate);
+        repositories.getTransactionRepository().deleteAllByDateIsBefore(limitDate.plusDays(1));
     }
 }

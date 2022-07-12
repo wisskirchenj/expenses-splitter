@@ -2,9 +2,9 @@ package de.cofinpro.splitter.controller.command;
 
 import de.cofinpro.splitter.io.ConsolePrinter;
 import de.cofinpro.splitter.model.Repositories;
-import de.cofinpro.splitter.model.Transactions;
 import de.cofinpro.splitter.persistence.GroupRepository;
 import de.cofinpro.splitter.persistence.PersonRepository;
+import de.cofinpro.splitter.persistence.TransactionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,12 +28,15 @@ class GroupMembersCommandTest {
     @Spy
     PersonRepository personRepository;
 
+    @Spy
+    TransactionRepository transactionRepository;
+
     Repositories repositories;
 
 
     @BeforeEach
     void setup() {
-        repositories = new Repositories(new Transactions(), groupRepository, personRepository);
+        repositories = new Repositories(transactionRepository, groupRepository, personRepository);
     }
 
     @ParameterizedTest
