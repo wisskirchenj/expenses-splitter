@@ -12,7 +12,7 @@ import static de.cofinpro.splitter.controller.command.GroupCommand.UNKNOWN_GROUP
 
 /**
  * LineCommand implementation of the "secretSanta" command, that shuffles a random
- * git assignment avoiding slef- and mutual assignments
+ * gift assignment avoiding slef- and mutual assignments
  */
 public class SecretSantaCommand implements LineCommand {
 

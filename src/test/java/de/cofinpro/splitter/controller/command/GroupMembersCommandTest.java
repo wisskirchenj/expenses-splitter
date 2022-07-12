@@ -2,16 +2,11 @@ package de.cofinpro.splitter.controller.command;
 
 import de.cofinpro.splitter.io.ConsolePrinter;
 import de.cofinpro.splitter.model.Repositories;
-import de.cofinpro.splitter.persistence.GroupRepository;
-import de.cofinpro.splitter.persistence.PersonRepository;
-import de.cofinpro.splitter.persistence.TransactionRepository;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.mockito.Mockito.verify;
@@ -22,21 +17,11 @@ class GroupMembersCommandTest {
     @Mock
     ConsolePrinter printer;
 
-    @Spy
-    GroupRepository groupRepository;
-
-    @Spy
-    PersonRepository personRepository;
-
-    @Spy
-    TransactionRepository transactionRepository;
-
     Repositories repositories;
 
 
     @BeforeEach
     void setup() {
-        repositories = new Repositories(transactionRepository, groupRepository, personRepository);
     }
 
     @ParameterizedTest
@@ -57,7 +42,7 @@ class GroupMembersCommandTest {
         groupCommand.execute(repositories);
         verify(printer).printError(LineCommand.ERROR_INVALID);
     }
-
+/*
     @Test
     void whenValidNonExistentGroup_showErrorUnknown() {
         String[] args = "show GROUP".split(" ");
@@ -65,10 +50,12 @@ class GroupMembersCommandTest {
         groupCommand.execute(repositories);
         verify(printer).printError("Unknown group");
     }
-
-   /* @Test
+/*
+    @Test
     void whenExistentGroup_showWorks() {
-        repositories.getGroups().put("GROUP", new GroupMembers("Peter", "Mary"));
+        Group group = new Group().setName("GROUP")
+                .setMembers(Set.of(new Person("Peter"), new Person("Mary")));
+        repositories.getGroupRepository().save(group);
         String[] args = "show GROUP".split(" ");
         GroupCommand groupCommand = new GroupCommand(printer, args);
         groupCommand.execute(repositories);
@@ -77,8 +64,9 @@ class GroupMembersCommandTest {
         InOrder inOrder = inOrder(printer);
         inOrder.verify(printer).printInfo("Mary");
         inOrder.verify(printer).printInfo("Peter");
+        repositories.getGroupRepository().delete(group);
     }
-
+/*
     @Test
     void whenCreateValid_GroupAdded() {
         String[] args = "create GROUP (Hans, Franz, Sabine)".split(" ");

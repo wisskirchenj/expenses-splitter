@@ -8,6 +8,9 @@ import lombok.experimental.Accessors;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
+/**
+ * entity for storing a person with name.
+ */
 @Getter
 @Setter
 @NoArgsConstructor

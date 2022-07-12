@@ -11,6 +11,9 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+/**
+ * entity for storing a group with name and members (Person instances in ManyToMany relationship).
+ */
 @Getter
 @Setter
 @NoArgsConstructor

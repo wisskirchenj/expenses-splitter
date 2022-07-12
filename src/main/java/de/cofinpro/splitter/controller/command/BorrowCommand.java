@@ -16,7 +16,7 @@ public class BorrowCommand extends PayCommand {
     }
 
     /**
-     * add the transaction to the list of the PairTransactions to the persons given (if exists - or create).
+     * add the transaction and possibly new persons in it to the database.
      * The amount may have to be negated, depending on the position of the borrower in the PersonPair key.
      * @param repositories  the repositories.
      */

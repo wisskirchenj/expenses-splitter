@@ -9,6 +9,10 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
+/**
+ * entity for storing a transaction between two persons on a date for an amount, which may be negative.
+ * The lexicographically less person is always stored as first and the other as second to ease work with balances.
+ */
 @Getter
 @Setter
 @NoArgsConstructor

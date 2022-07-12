@@ -4,6 +4,11 @@ import de.cofinpro.splitter.model.Repositories;
 
 import java.time.LocalDate;
 
+/**
+ * **
+ * LineCommand implementation of the "writeOff" command, taking a limit date argument
+ * which deletes all transactions from the database before or equal the limit date.
+ */
 public class WriteOffCommand implements LineCommand {
 
     private final LocalDate limitDate;

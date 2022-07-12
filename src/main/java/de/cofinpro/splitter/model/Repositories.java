@@ -8,8 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * container bean that represents the overall data model gathered throughout the application run,
- * i.e. created groups and transactions, which are in turn autowired.
+ * container bean that gathers all the entity repositories,
+ * i.e. for created persons, groups and transactions, which are in turn autowired.
+ * The bean is passed to the actual commands for accessing the database.
  */
 @Component
 @Data
