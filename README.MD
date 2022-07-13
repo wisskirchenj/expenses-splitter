@@ -40,6 +40,15 @@ Commands presently supported:
 A possible cents remainder of N cents from splitting division is spread between the first N persons in the list ordered by name,
 each person pays an extra 0.01.
 
+> secretSanta GROUPNAME -> random gift assignment in a group with rules:
+No-one should be assigned to get a gift for themselves in groups larger than 1 person; 
+Gift pairs cannot be reciprocal in groups larger than 2 people: in other words, you can't get a gift from a person and give a gift to the same person
+
+> [date] cashback Person itemName amount [(list of [+|-] persons | GROUPS)] -> a commitment to refund some expense to a group, splitting it exactly between
+members with the same logic as in purchase.
+
+> [date] writeOff -> clear all transactions (in the database) before and including the given limit date (default today).
+
 > help -> print the list of commands in natural sorted order
 
 > exit
@@ -63,3 +72,6 @@ money arithmetic on cents basis with rounding etc,
 
 30.06.22 Stage 3 completed, complicated group commands of adding, removing persons and groups added for use in
  purchase commands. Streaming and groupingBy collectors applied.
+
+12.07.22 Stage 4 completed, a lot new functionality: secretSanta, cashBack and writeOff commands added, 
+H2 database with @ManyToMany, @Transactional, FetchType.Lazy vs Eager, CascadeType.MERGE etc.. Native @Query for Join select.

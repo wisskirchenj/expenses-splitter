@@ -8,6 +8,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
 
+import static java.util.function.Predicate.not;
+
 /**
  * implementation of LineCommand for the "balance" command execution.
  */
@@ -58,11 +60,14 @@ public class BalanceCommand implements LineCommand {
             printer.printError(ERROR_INVALID);
         } else {
             List<PairBalance> balances = repositories.getTransactionRepository().getBalances(balanceDate);
-            printer.printOwes(balances.stream().map(this::getOwesText).sorted().toList());
+            printer.printOwes(balances.stream().map(this::getOwesText).filter(not(String::isEmpty)).sorted().toList());
         }
     }
 
     private String getOwesText(PairBalance pairBalance) {
+        if (pairBalance.getBalance() == 0) {
+            return "";
+        }
         String ower = pairBalance.getBalance() < 0 ? pairBalance.getSecondPerson() : pairBalance.getFirstPerson();
         String owee = pairBalance.getBalance() < 0 ? pairBalance.getFirstPerson() : pairBalance.getSecondPerson();
         return String.format(Locale.US, "%s owes %s %.2f", ower, owee, Math.abs(pairBalance.getBalance()) / 100.0);
