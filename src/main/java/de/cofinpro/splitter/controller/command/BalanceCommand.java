@@ -1,10 +1,13 @@
 package de.cofinpro.splitter.controller.command;
 
+import de.cofinpro.splitter.controller.PersonsResolver;
 import de.cofinpro.splitter.io.ConsolePrinter;
 import de.cofinpro.splitter.model.PairBalance;
 import de.cofinpro.splitter.model.Repositories;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
@@ -19,6 +22,8 @@ public class BalanceCommand implements LineCommand {
     private final LocalDate balanceDate;
     private boolean isOpenBalance = false;
     private final boolean invalid;
+
+    private String[] personsTokens = new String[0];
 
     public BalanceCommand(ConsolePrinter printer, LocalDate date, String[] arguments) {
         this.printer = printer;
@@ -37,17 +42,26 @@ public class BalanceCommand implements LineCommand {
      * @return validation result.
      */
     private boolean validClArgumentsProcessed(String[] arguments) {
-        if (arguments.length > 1) {
-            return false;
-        }
-        if (arguments.length == 0 || arguments[0].equalsIgnoreCase("close")) {
+        if (arguments.length == 0) {
             return true;
+        }
+        if (arguments[0].contains("(")) {
+            return personsResolved(arguments);
         }
         if (arguments[0].equalsIgnoreCase("open")) {
             isOpenBalance = true;
-            return true;
+        } else if (!arguments[0].equalsIgnoreCase("close")) {
+            return false;
         }
-        return false;
+        if (arguments.length > 1) {
+            return personsResolved(Arrays.copyOfRange(arguments, 1, arguments.length));
+        }
+        return true;
+    }
+
+    private boolean personsResolved(String[] arguments) {
+        personsTokens = PersonsResolver.tokenizePersonsArguments(arguments);
+        return personsTokens.length != 0;
     }
 
     /** if valid arguments were given,
@@ -59,8 +73,21 @@ public class BalanceCommand implements LineCommand {
         if (invalid) {
             printer.printError(ERROR_INVALID);
         } else {
+            Collection<String> owerFilter
+                    = PersonsResolver.resolvePersonsFromTokens(personsTokens, repositories.getGroupRepository());
             List<PairBalance> balances = repositories.getTransactionRepository().getBalances(balanceDate);
-            printer.printOwes(balances.stream().map(this::getOwesText).filter(not(String::isEmpty)).sorted().toList());
+            printer.printOwes(balances.stream()
+                    .map(this::getOwesText)
+                    .filter(not(String::isEmpty))
+                    .filter(owesText -> {
+                        if (owerFilter.isEmpty()) {
+                            return true;
+                        } else {
+                            return owerFilter.contains(owesText.substring(0, owesText.indexOf(" ")));
+                        }
+                    })
+                    .sorted()
+                    .toList());
         }
     }
 

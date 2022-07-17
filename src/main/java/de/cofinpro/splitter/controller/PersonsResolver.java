@@ -20,7 +20,7 @@ public class PersonsResolver {
      * format validates and processes the group members (incl. other groups) given into the field level array
      * group members.
      * @param args the last arguments of the command line, that should specify persons (members and groups)
-     * @return false, if syntax error, true if members could be processed.
+     * @return empty array, if syntax error or the persons resolved.
      */
     public static String[] tokenizePersonsArguments(String[] args) {
         String groupArg = String.join("", args);

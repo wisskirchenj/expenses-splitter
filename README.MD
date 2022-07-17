@@ -31,8 +31,9 @@ Commands presently supported:
 
 > [date] repay PersonOne PersonTwo amount -> PersonOne repaid an amount to PersonTwo on the date.
 
-> [date] balance [open|close] -> Calculate and display the list of repayments with names and amounts to be repaid in the natural sorted order for the balance date.
--> Here open refers to the opening balance on the first day of the month and close refers to the closing balance on that specific date.
+> [date] balance [open|close] [(+/- list of names and groups)]-> Calculate and display the list of repayments with names and amounts to be repaid in the natural sorted order for the balance date.
+Here open refers to the opening balance on the first day of the month and close refers to the closing balance on that specific date. The list
+of names and groups is resolved and the balance filters (i.e. displays only) those owers who are amongst the resolved names
 
 > group create|show|add|remove GROUPNAME [(+/- list of names and groups)] -> create or display groups of persons used in purchase command
 
@@ -75,3 +76,6 @@ money arithmetic on cents basis with rounding etc,
 
 12.07.22 Stage 4 completed, a lot new functionality: secretSanta, cashBack and writeOff commands added, 
 H2 database with @ManyToMany, @Transactional, FetchType.Lazy vs Eager, CascadeType.MERGE etc.. Native @Query for Join select.
+
+17.07.22 Stage 5 completed, balance command gets additional arguments to filter on persons, which have to be
+resolved in the same way as done for purchase, cashBack and group add/remove commands
