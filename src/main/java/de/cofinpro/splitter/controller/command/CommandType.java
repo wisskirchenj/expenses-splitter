@@ -10,7 +10,8 @@ public enum CommandType {
     PURCHASE("purchase"),
     CASH_BACK("cashBack"),
     SECRET_SANTA("secretSanta"),
-    WRITE_OFF("writeOff");
+    WRITE_OFF("writeOff"),
+    BALANCE_PERFECT("balancePerfect");
 
     private final String commandName;
 

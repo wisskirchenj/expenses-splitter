@@ -12,9 +12,9 @@ professionally every day now.
 ## Technology / External Libraries
 
 - Spring Boot 2.7.1,
-- Spring Web MVC - with Tomcat
+- Spring Command Line Runner
 - H2 Database 2.1.214 or later 
-- Spring Data JPA / Hibernate
+- Spring Data JPA / Hibernate / JPA data projection
 - Lombok' annotation processors,
 - Apache Log4j SLF4J API binding to Log4j 2 logging and
 - Junit 5 with
@@ -31,9 +31,15 @@ Commands presently supported:
 
 > [date] repay PersonOne PersonTwo amount -> PersonOne repaid an amount to PersonTwo on the date.
 
+
 > [date] balance [open|close] [(+/- list of names and groups)]-> Calculate and display the list of repayments with names and amounts to be repaid in the natural sorted order for the balance date.
 Here open refers to the opening balance on the first day of the month and close refers to the closing balance on that specific date. The list
 of names and groups is resolved and the balance filters (i.e. displays only) those owers who are amongst the resolved names
+
+
+> [date] balancePerfect [open|close] [(+/- list of names and groups)]-> Calculate and display the list of repayments as in the
+balance command above, but do an optimization of repayments, e.g. net owing sums in a way, that as few transactions,
+repayments as possible are needed to resettle all debts. (cf: https://stackoverflow.com/questions/1163116/algorithm-to-determine-minimum-payments-amongst-a-group)
 
 > group create|show|add|remove GROUPNAME [(+/- list of names and groups)] -> create or display groups of persons used in purchase command
 
@@ -58,7 +64,7 @@ Have fun!
 
 ## Project completion
 
-[//]: # (Project was completed on xx.0d.22.)
+Project was completed on 18.07.22.
 
 ## Progress
 
@@ -79,3 +85,6 @@ H2 database with @ManyToMany, @Transactional, FetchType.Lazy vs Eager, CascadeTy
 
 17.07.22 Stage 5 completed, balance command gets additional arguments to filter on persons, which have to be
 resolved in the same way as done for purchase, cashBack and group add/remove commands
+
+18.07.22 Final Stage 6 completed, implement clever algorithm (class BalanceOptimizer) to reduce
+minimum repayments / settlements amongst the group of involved persons in the transactions.

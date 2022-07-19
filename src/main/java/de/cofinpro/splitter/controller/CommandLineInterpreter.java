@@ -48,6 +48,7 @@ public class CommandLineInterpreter {
             case "borrow" -> new BorrowCommand(printer, commandDate, commandArgs);
             case "repay" -> new RepayCommand(printer,  commandDate, commandArgs);
             case "balance" -> new BalanceCommand(printer, commandDate, commandArgs);
+            case "balanceperfect" -> new BalanceCommand(printer, commandDate, true, commandArgs);
             case "purchase" -> new PurchaseCommand(printer, commandDate, commandArgs);
             case "cashback" -> new PurchaseCommand(printer, commandDate, true, commandArgs);
             case "group" -> new GroupCommand(printer, commandArgs);
