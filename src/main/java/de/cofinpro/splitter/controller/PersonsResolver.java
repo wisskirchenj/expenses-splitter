@@ -41,7 +41,7 @@ public class PersonsResolver {
      */
     public static Collection<String> resolvePersonsFromTokens(String[] tokens, GroupRepository repository) {
         Map<Boolean, List<String>> tokensGrouped = Arrays.stream(tokens)
-                .collect(Collectors.groupingBy(mem -> mem.startsWith("-")));
+                .collect(Collectors.partitioningBy(mem -> mem.startsWith("-")));
         if (tokensGrouped.get(false) == null) {
             return Collections.emptySet();
         }
