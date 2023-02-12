@@ -27,38 +27,47 @@ The sources of main project tasks (6 stages) and the unit, mockito, spring testi
 ## Program description
 
 Commands presently supported:
-> [date] borrow PersonOne PersonTwo amount -> PersonTwo lent some amount to PersonOne on the specified date
 
-> [date] repay PersonOne PersonTwo amount -> PersonOne repaid an amount to PersonTwo on the date.
+    [date] borrow PersonOne PersonTwo amount 
+PersonTwo lent some amount to PersonOne on the specified date
 
+    [date] repay PersonOne PersonTwo amount
+PersonOne repaid an amount to PersonTwo on the date.
 
-> [date] balance [open|close] \[(+/- list of names and groups)\]-> Calculate and display the list of repayments with names and amounts to be repaid in the natural sorted order for the balance date.
+    [date] balance [open|close] \[(+/- list of names and groups)\]
+Calculate and display the list of repayments with names and amounts to be repaid in the natural sorted order for the balance date.
 Here open refers to the opening balance on the first day of the month and close refers to the closing balance on that specific date. The list
 of names and groups is resolved and the balance filters (i.e. displays only) those owers who are amongst the resolved names
 
-
-> [date] balancePerfect [open|close] \[(+/- list of names and groups)\]-> Calculate and display the list of repayments as in the
+    [date] balancePerfect [open|close] \[(+/- list of names and groups)\]
+Calculate and display the list of repayments as in the
 balance command above, but do an optimization of repayments, e.g. net owing sums in a way, that as few transactions,
 repayments as possible are needed to resettle all debts. (cf: https://stackoverflow.com/questions/1163116/algorithm-to-determine-minimum-payments-amongst-a-group)
 
-> group create|show|add|remove GROUPNAME [(+/- list of names and groups)] -> create or display groups of persons used in purchase command
+    group create|show|add|remove GROUPNAME [(+/- list of names and groups)]
+create or display groups of persons used in purchase command
 
-> [date] purchase Person itemName amount (+/- list of names and groups) -> a person purchases an item for an amount, which must be spread in the resolved group.
+    [date] purchase Person itemName amount (+/- list of names and groups)
+a person purchases an item for an amount, which must be spread in the resolved group.
 A possible cents remainder of N cents from splitting division is spread between the first N persons in the list ordered by name,
 each person pays an extra 0.01.
 
-> secretSanta GROUPNAME -> random gift assignment in a group with rules:
+    secretSanta GROUPNAME
+random gift assignment in a group with rules:
 No-one should be assigned to get a gift for themselves in groups larger than 1 person; 
 Gift pairs cannot be reciprocal in groups larger than 2 people: in other words, you can't get a gift from a person and give a gift to the same person
 
-> [date] cashback Person itemName amount [(list of [+|-] persons | GROUPS)] -> a commitment to refund some expense to a group, splitting it exactly between
+    [date] cashback Person itemName amount [(list of [+|-] persons | GROUPS)]
+a commitment to refund some expense to a group, splitting it exactly between
 members with the same logic as in purchase.
 
-> [date] writeOff -> clear all transactions (in the database) before and including the given limit date (default today).
+    [date] writeOff
+clear all transactions (in the database) before and including the given limit date (default today).
 
-> help -> print the list of commands in natural sorted order
+    help
+print the list of commands in natural sorted order
 
-> exit
+    exit
 
 Have fun!
 
