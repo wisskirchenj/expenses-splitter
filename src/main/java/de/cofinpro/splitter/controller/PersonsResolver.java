@@ -1,9 +1,13 @@
 package de.cofinpro.splitter.controller;
 
 import de.cofinpro.splitter.persistence.GroupRepository;
-import de.cofinpro.splitter.persistence.Person;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -46,22 +50,15 @@ public class PersonsResolver {
             return Collections.emptySet();
         }
         List<String> result = new ArrayList<>(tokensGrouped.get(false).stream()
-                .flatMap(token -> getPersons(repository, token).orElse(List.of(token)).stream())
+                .flatMap(token -> repository.getPersons(token).orElse(List.of(token)).stream())
                 .sorted().distinct()
                 .toList());
         if (tokensGrouped.get(true) != null) {
             result.removeAll(tokensGrouped.get(true).stream().map(mem -> mem.substring(1))
-                    .flatMap(token -> getPersons(repository, token).orElse(List.of(token)).stream())
+                    .flatMap(token -> repository.getPersons(token).orElse(List.of(token)).stream())
                     .sorted().distinct().toList());
         }
         return result;
     }
 
-    private static Optional<List<String>> getPersons(GroupRepository repository, String token) {
-        var groupOpt = repository.findByName(token);
-        if (groupOpt.isEmpty()) {
-            return Optional.empty();
-        }
-        return Optional.of(groupOpt.get().getMembers().stream().map(Person::getName).toList());
-    }
 }

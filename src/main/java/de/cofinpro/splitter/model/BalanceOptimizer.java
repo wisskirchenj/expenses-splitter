@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import static java.util.Map.Entry.comparingByValue;
@@ -28,7 +29,7 @@ public class BalanceOptimizer {
                 .collect(Collectors.toCollection(ArrayList::new));
         var owerBalances = netBalances.entrySet().stream()
                 .filter(entry -> entry.getValue() > 0)
-                .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+                .sorted(Entry.<String, Long>comparingByValue().reversed())
                 .collect(Collectors.toCollection(ArrayList::new));
 
         List<PairBalanceRecord> optimizedBalances = new ArrayList<>();
@@ -46,7 +47,7 @@ public class BalanceOptimizer {
      * because one of the contrahents keeps some remaining difference amount.
      * @return the new pair balance to be added to the optimized balance list.
      */
-    private PairBalanceRecord settleNextPairBalance(List<Map.Entry<String, Long>> owerBalances, List<Map.Entry<String, Long>> oweeBalances) {
+    private PairBalanceRecord settleNextPairBalance(List<Entry<String, Long>> owerBalances, List<Entry<String, Long>> oweeBalances) {
         for (var owerEntry: owerBalances) {
             for (var oweeEntry: oweeBalances) {
                 if (owerEntry.getValue().equals(-oweeEntry.getValue())) {

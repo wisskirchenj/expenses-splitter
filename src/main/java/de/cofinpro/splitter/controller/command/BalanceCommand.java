@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Predicate;
 
 /**
  * implementation of LineCommand for the "balance" and "balancePerfect" command (extra constructor) execution.
@@ -85,26 +86,29 @@ public class BalanceCommand implements LineCommand {
         if (invalid) {
             printer.printError(ERROR_INVALID);
         } else {
-            Collection<String> owerFilter
+            Collection<String> owersToFilterOn
                     = PersonsResolver.resolvePersonsFromTokens(personsTokens, repositories.getGroupRepository());
             List<PairBalanceRecord> balances = repositories.getTransactionRepository().getBalances(balanceDate)
                     .stream()
                     .map(PairBalanceRecord::fromJpa)
                     .filter(pb -> pb.balance() != 0)
-                    .filter(pb -> {
-                        if (owerFilter.isEmpty()) {
-                            return true;
-                        } else {
-                            return owerFilter.contains(pb.balance() < 0 ? pb.second() : pb.first());
-                        }
-                    })
+                    .filter(applyFilterOnOptionalOwersArguments(owersToFilterOn))
                     .toList();
-
             if (isPerfect) {
                 balances = new BalanceOptimizer().optimize(balances);
             }
             printBalances(balances);
         }
+    }
+
+    private Predicate<PairBalanceRecord> applyFilterOnOptionalOwersArguments(Collection<String> owersToFilterOn) {
+        return pbr -> {
+            if (owersToFilterOn.isEmpty()) {
+                return true;
+            } else {
+                return owersToFilterOn.contains(pbr.balance() < 0 ? pbr.second() : pbr.first());
+            }
+        };
     }
 
     private void printBalances(List<PairBalanceRecord> balances) {

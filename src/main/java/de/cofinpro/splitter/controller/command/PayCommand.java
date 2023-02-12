@@ -54,7 +54,7 @@ public abstract class PayCommand implements LineCommand {
         if (invalid || amount == 0) {
             printer.printError(ERROR_INVALID);
         } else {
-            executeMoneyTransfer(repositories);
+            addTransaction(repositories, executeMoneyTransfer());
         }
     }
 
@@ -69,7 +69,6 @@ public abstract class PayCommand implements LineCommand {
 
     /**
      * do the happy path execution of money transfer.
-     * @param repositories the repositories.
      */
-    protected abstract void executeMoneyTransfer(Repositories repositories);
+    protected abstract PersonPair executeMoneyTransfer();
 }

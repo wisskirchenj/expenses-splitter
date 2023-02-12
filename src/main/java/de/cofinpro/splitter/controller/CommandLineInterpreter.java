@@ -1,6 +1,17 @@
 package de.cofinpro.splitter.controller;
 
-import de.cofinpro.splitter.controller.command.*;
+import de.cofinpro.splitter.controller.command.BalanceCommand;
+import de.cofinpro.splitter.controller.command.BorrowCommand;
+import de.cofinpro.splitter.controller.command.ExitCommand;
+import de.cofinpro.splitter.controller.command.GroupCommand;
+import de.cofinpro.splitter.controller.command.HelpCommand;
+import de.cofinpro.splitter.controller.command.InvalidCommand;
+import de.cofinpro.splitter.controller.command.LineCommand;
+import de.cofinpro.splitter.controller.command.PurchaseCommand;
+import de.cofinpro.splitter.controller.command.RepayCommand;
+import de.cofinpro.splitter.controller.command.SecretSantaCommand;
+import de.cofinpro.splitter.controller.command.UnknownCommand;
+import de.cofinpro.splitter.controller.command.WriteOffCommand;
 import de.cofinpro.splitter.io.ConsolePrinter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

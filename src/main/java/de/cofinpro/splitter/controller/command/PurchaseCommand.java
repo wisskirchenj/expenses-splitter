@@ -25,7 +25,7 @@ public class PurchaseCommand implements LineCommand {
     private String[] personsTokens;
 
     public PurchaseCommand(ConsolePrinter printer, LocalDate date, String[] arguments) {
-        this(printer,date,false, arguments);
+        this(printer, date, false, arguments);
     }
 
 
@@ -39,6 +39,7 @@ public class PurchaseCommand implements LineCommand {
     /**
      * validates and processes the arguments given: less than 2 arguments, if argument given. must be "open"
      * or "close" = default.
+     *
      * @param arguments arguments to be processed and validated
      * @return validation result.
      */
@@ -58,6 +59,7 @@ public class PurchaseCommand implements LineCommand {
 
     /**
      * execute the purchase, if command arguments valid and group exists.
+     *
      * @param repositories the application model data
      */
     @Override
@@ -70,7 +72,7 @@ public class PurchaseCommand implements LineCommand {
             if (personsToSplit.isEmpty()) {
                 printer.printError(EMPTY_GROUP);
             } else {
-                executeGroupSplit(repositories, personsToSplit);
+                executeGroupSplit(personsToSplit);
             }
         }
     }
@@ -78,24 +80,23 @@ public class PurchaseCommand implements LineCommand {
     /**
      * split the amount by cent division and distribute possible remainder cent-wise to first persons in group.
      * Method also handles the case, when the payer belongs to the group; then no transaction is created for her share.
-     * @param repositories  the model data
+     *
      * @param personsToSplit group of person names for splitting the amount.
      */
-    private void executeGroupSplit(Repositories repositories, Collection<String> personsToSplit) {
+    private void executeGroupSplit(Collection<String> personsToSplit) {
         long splitAmount = amount / personsToSplit.size();
         long remainingCents = amount % personsToSplit.size();
         for (String person : personsToSplit) {
             if (!person.equals(payerOrRefunder)) {
-                executeBorrowTransaction(repositories, person,
-                        remainingCents > 0 ? splitAmount + 1: splitAmount);
+                executeBorrowTransaction(person, remainingCents > 0 ? splitAmount + 1 : splitAmount);
             }
             remainingCents--;
         }
     }
 
-    private void executeBorrowTransaction(Repositories repositories, String borrower, long centAmount) {
+    private void executeBorrowTransaction(String borrower, long centAmount) {
         String transactionAmount = String.valueOf((isCashback ? centAmount * -1 : centAmount) / 100.0);
-        new BorrowCommand(printer, date, new String[] {borrower, payerOrRefunder, transactionAmount})
-                    .executeMoneyTransfer(repositories);
+        new BorrowCommand(printer, date, new String[]{borrower, payerOrRefunder, transactionAmount})
+                .executeMoneyTransfer();
     }
 }
