@@ -72,7 +72,7 @@ public class PurchaseCommand implements LineCommand {
             if (personsToSplit.isEmpty()) {
                 printer.printError(EMPTY_GROUP);
             } else {
-                executeGroupSplit(personsToSplit);
+                executeGroupSplit(personsToSplit, repositories);
             }
         }
     }
@@ -82,21 +82,22 @@ public class PurchaseCommand implements LineCommand {
      * Method also handles the case, when the payer belongs to the group; then no transaction is created for her share.
      *
      * @param personsToSplit group of person names for splitting the amount.
+     * @param repositories the application model data
      */
-    private void executeGroupSplit(Collection<String> personsToSplit) {
+    private void executeGroupSplit(Collection<String> personsToSplit, Repositories repositories) {
         long splitAmount = amount / personsToSplit.size();
         long remainingCents = amount % personsToSplit.size();
         for (String person : personsToSplit) {
             if (!person.equals(payerOrRefunder)) {
-                executeBorrowTransaction(person, remainingCents > 0 ? splitAmount + 1 : splitAmount);
+                executeBorrowTransaction(repositories, person, remainingCents > 0 ? splitAmount + 1 : splitAmount);
             }
             remainingCents--;
         }
     }
 
-    private void executeBorrowTransaction(String borrower, long centAmount) {
+    private void executeBorrowTransaction(Repositories repositories, String borrower, long centAmount) {
         String transactionAmount = String.valueOf((isCashback ? centAmount * -1 : centAmount) / 100.0);
         new BorrowCommand(printer, date, new String[]{borrower, payerOrRefunder, transactionAmount})
-                .executeMoneyTransfer();
+                .execute(repositories);
     }
 }

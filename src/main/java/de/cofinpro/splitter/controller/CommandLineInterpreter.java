@@ -36,7 +36,9 @@ public class CommandLineInterpreter {
     private final DateTimeFormatter dateTimeFormatter;
 
     @Autowired
-    public CommandLineInterpreter(Scanner scanner, ConsolePrinter printer, DateTimeFormatter dateTimeFormatter) {
+    public CommandLineInterpreter(Scanner scanner,
+                                  ConsolePrinter printer,
+                                  DateTimeFormatter dateTimeFormatter) {
         this.scanner = scanner;
         this.printer = printer;
         this.dateTimeFormatter = dateTimeFormatter;

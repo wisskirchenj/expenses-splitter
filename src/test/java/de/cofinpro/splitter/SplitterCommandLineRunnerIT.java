@@ -8,18 +8,17 @@ import de.cofinpro.splitter.io.CommandLineConfiguration;
 import de.cofinpro.splitter.io.ConsolePrinter;
 import de.cofinpro.splitter.model.Repositories;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InOrder;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.List;
 import java.util.Scanner;
@@ -32,12 +31,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
-@Disabled
+@SpringBootTest(properties = {"command.line.runner.enabled=false"})
 @ExtendWith(MockitoExtension.class)
 class SplitterCommandLineRunnerIT {
 
-    @MockBean
+    @Mock
     Scanner scanner;
 
     @Autowired
@@ -54,6 +52,9 @@ class SplitterCommandLineRunnerIT {
 
     @BeforeEach
     void setUp() {
+        repositories.getGroupRepository().deleteAll();
+        repositories.getTransactionRepository().deleteAll();
+        repositories.getPersonRepository().deleteAll();
         splitterCommandLineRunner = new SplitterCommandLineRunner(
                 new CommandLineInterpreter(scanner, printer, new CommandLineConfiguration().getDateFormatter()),
                 repositories

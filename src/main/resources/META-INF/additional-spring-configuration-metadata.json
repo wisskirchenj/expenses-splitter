@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "command.line.runner.enabled",
+      "type": "java.lang.Boolean",
+      "description": "flag to enable or disable the command line runner."
+    }
+  ]
+}
