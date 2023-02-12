@@ -1,6 +1,6 @@
 # IDEA EDU Course ...
 
-Implemented in the Java Backend Developer Track of hyperskill.org' JetBrain Academy.
+Implemented in the Java Backend Developer Track of hyperskill.org JetBrain Academy.
 
 Main purpose of doing this project, is to complete the Java Backend Developer track, which now is at 93% applied core topics 
 and 98% learned topics overall.
@@ -11,11 +11,11 @@ professionally every day now.
 
 ## Technology / External Libraries
 
-- Spring Boot 2.7.1,
+- Spring Boot 3.0.2,
 - Spring Command Line Runner
 - H2 Database 2.1.214 or later 
 - Spring Data JPA / Hibernate / JPA data projection
-- Lombok' annotation processors,
+- Lombok's annotation processors,
 - Apache Log4j SLF4J API binding to Log4j 2 logging and
 - Junit 5 with
 - Mockito (mockito-inline) testing.
@@ -32,12 +32,12 @@ Commands presently supported:
 > [date] repay PersonOne PersonTwo amount -> PersonOne repaid an amount to PersonTwo on the date.
 
 
-> [date] balance [open|close] [(+/- list of names and groups)]-> Calculate and display the list of repayments with names and amounts to be repaid in the natural sorted order for the balance date.
+> [date] balance [open|close] \[(+/- list of names and groups)\]-> Calculate and display the list of repayments with names and amounts to be repaid in the natural sorted order for the balance date.
 Here open refers to the opening balance on the first day of the month and close refers to the closing balance on that specific date. The list
 of names and groups is resolved and the balance filters (i.e. displays only) those owers who are amongst the resolved names
 
 
-> [date] balancePerfect [open|close] [(+/- list of names and groups)]-> Calculate and display the list of repayments as in the
+> [date] balancePerfect [open|close] \[(+/- list of names and groups)\]-> Calculate and display the list of repayments as in the
 balance command above, but do an optimization of repayments, e.g. net owing sums in a way, that as few transactions,
 repayments as possible are needed to resettle all debts. (cf: https://stackoverflow.com/questions/1163116/algorithm-to-determine-minimum-payments-amongst-a-group)
 
@@ -75,12 +75,12 @@ CommandLineInterpreter and LineCommand Interface, Mockito Inorder Integration te
 
 27.06.22 Stage 2 completed, further commands added for groups creating and
 splitting, also now transferred from integer transaction amounts to real
-money arithmetic on cents basis with rounding etc,
+money arithmetic on cents basis with rounding etc.
 
 30.06.22 Stage 3 completed, complicated group commands of adding, removing persons and groups added for use in
  purchase commands. Streaming and groupingBy collectors applied.
 
-12.07.22 Stage 4 completed, a lot new functionality: secretSanta, cashBack and writeOff commands added, 
+12.07.22 Stage 4 completed, a lot of new functionality: secretSanta, cashBack and writeOff commands added, 
 H2 database with @ManyToMany, @Transactional, FetchType.Lazy vs Eager, CascadeType.MERGE etc.. Native @Query for Join select.
 
 17.07.22 Stage 5 completed, balance command gets additional arguments to filter on persons, which have to be
