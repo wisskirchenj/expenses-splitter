@@ -1,7 +1,7 @@
 plugins {
     java
-    id("org.springframework.boot") version "3.0.2"
-    id("io.spring.dependency-management") version "1.1.0"
+    id("org.springframework.boot") version "3.1.3"
+    id("io.spring.dependency-management") version "1.1.3"
 }
 
 group = "de.cofinpro"
@@ -28,7 +28,7 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.mockito:mockito-inline:5.1.1")
+    testImplementation("org.mockito:mockito-inline:5.2.0")
 }
 
 tasks.named("compileJava") {
