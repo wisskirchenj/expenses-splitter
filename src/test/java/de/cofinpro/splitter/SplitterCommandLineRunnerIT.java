@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+import static de.cofinpro.splitter.controller.command.LineCommand.ERROR_UNKNOWN;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.never;
@@ -315,5 +316,13 @@ class SplitterCommandLineRunnerIT {
                 "YourCompany owes Chuck 6.00",
                 "YourCompany owes Elon 6.00",
                 "YourCompany owes Frank 6.00"));
+    }
+
+    @Test
+    void whenUnknownCommand_UnknownCommandExecutes() {
+        when(scanner.nextLine()).thenReturn("2020.12.24 unknown Ann Frank 2000.10",
+                "exit");
+        splitterCommandLineRunner.run();
+        verify(printer).printError(ERROR_UNKNOWN);
     }
 }

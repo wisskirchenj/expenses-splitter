@@ -1,7 +1,7 @@
 plugins {
     java
-    id("org.springframework.boot") version "3.1.5"
-    id("io.spring.dependency-management") version "1.1.3"
+    id("org.springframework.boot") version "3.2.0"
+    id("io.spring.dependency-management") version "1.1.4"
     id("org.sonarqube") version "4.2.1.3168"
     //id("org.sonarqube") version "4.3.1.3277"
     jacoco
@@ -23,13 +23,14 @@ tasks.jacocoTestReport {
     }
 }
 
+val sonarToken: String by project
 sonar {
     properties {
+        property("sonar.token", sonarToken)
         property("sonar.projectKey", "expenses-splitter")
         property("sonar.projectName", "expenses-splitter")
         property("sonar.jacoco.reportPaths", "build/reports/jacoco")
         property("sonar.junit.reportPaths", "build/test-results/test")
-        property("sonar.token", "sqp_d436210e94100d7ef46cf7a5c9ffabcafdd12657")
         property("sonar.host.url", "http://localhost:9000")
     }
 }
