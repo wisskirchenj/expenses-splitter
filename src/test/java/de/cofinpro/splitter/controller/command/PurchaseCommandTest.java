@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 
 import java.time.LocalDate;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 
 @MockitoSettings
@@ -54,5 +55,13 @@ class PurchaseCommandTest {
         PurchaseCommand purchaseCommand = new PurchaseCommand(mockPrinter, date, false, arguments);
         purchaseCommand.execute(null);
         verify(mockPrinter).printError(LineCommand.ERROR_INVALID);
+    }
+
+    @Test
+    void test_invalidCentsGiven() {
+        LocalDate date = LocalDate.now();
+        String[] arguments = {"payer", "refunder", "10.0", "invalidgroup"};
+        PurchaseCommand purchaseCommand = new PurchaseCommand(mockPrinter, date, false, arguments);
+        assertThrows(NumberFormatException.class, () -> purchaseCommand.getCentsFromDecimalInput("10.114"));
     }
 }

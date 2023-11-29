@@ -20,6 +20,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -159,5 +160,12 @@ class GroupCommandTest {
         assertEquals(Set.of("Franz", "Sabine", "Hans", "Tina"),
                 repositories.getGroupRepository().findByName("GROUP").orElseThrow()
                         .getMembers().stream().map(Person::getName).collect(Collectors.toSet()));
+    }
+
+    @Test
+    void whenInvalidGroup_NoAction() {
+        var args = "remove GROUP (NOTEXISTS)".split(" ");
+        var groupCommand = new GroupCommand(printer, args);
+        assertDoesNotThrow(() -> groupCommand.execute(repositories));
     }
 }
