@@ -13,7 +13,7 @@ import de.cofinpro.splitter.controller.command.SecretSantaCommand;
 import de.cofinpro.splitter.controller.command.UnknownCommand;
 import de.cofinpro.splitter.controller.command.WriteOffCommand;
 import de.cofinpro.splitter.io.ConsolePrinter;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -29,20 +29,12 @@ import java.util.Scanner;
  * date recognition if given as optional 1st parameter and the command recognition and split / hand over of arguments.
  */
 @Component
+@RequiredArgsConstructor
 public class CommandLineInterpreter {
 
     private final Scanner scanner;
     private final ConsolePrinter printer;
     private final DateTimeFormatter dateTimeFormatter;
-
-    @Autowired
-    public CommandLineInterpreter(Scanner scanner,
-                                  ConsolePrinter printer,
-                                  DateTimeFormatter dateTimeFormatter) {
-        this.scanner = scanner;
-        this.printer = printer;
-        this.dateTimeFormatter = dateTimeFormatter;
-    }
 
     /**
      * core method of the CommandLineInterpreter that parses the next user input line by use of the given scanner (bean).

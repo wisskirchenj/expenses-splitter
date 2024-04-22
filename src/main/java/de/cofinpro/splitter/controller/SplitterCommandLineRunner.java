@@ -2,7 +2,7 @@ package de.cofinpro.splitter.controller;
 
 import de.cofinpro.splitter.controller.command.LineCommand;
 import de.cofinpro.splitter.model.Repositories;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
@@ -18,17 +18,11 @@ import org.springframework.stereotype.Component;
         havingValue = "true",
         matchIfMissing = true)
 @Component
+@RequiredArgsConstructor
 public class SplitterCommandLineRunner implements CommandLineRunner {
 
     private final CommandLineInterpreter commandLineInterpreter;
     private final Repositories repositories;
-
-    @Autowired
-    public SplitterCommandLineRunner(CommandLineInterpreter commandLineInterpreter,
-                                     Repositories repositories) {
-        this.commandLineInterpreter = commandLineInterpreter;
-        this.repositories = repositories;
-    }
 
     @Override
     public void run(String... args) {
